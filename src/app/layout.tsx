@@ -1,8 +1,8 @@
 import "@/styles/global.css";
 
 export const metadata = {
-  title: "dannyochoa",
-  description: "Daniel Ochoa's personal website",
+  title: "1up",
+  description: "A 10000 hours productivy app",
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
