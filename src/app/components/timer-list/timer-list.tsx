@@ -4,6 +4,7 @@ interface TimerListProps {
   timers: TimerProps[];
 }
 
+// TODO: Fix "Each child in a list should have a unique "key" prop."
 // TODO: Add some more preliminary stylings
 //  - More left marging
 //  - More spacing in between timers
