@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 
-const Timer = () => {
+const Timer = ({ topicTitle }: { topicTitle: string }) => {
   const [time, setTime] = useState(0); // Time in milliseconds
   const [isRunning, setIsRunning] = useState(false);
 
@@ -33,14 +33,16 @@ const Timer = () => {
 
   return (
     <div className="m-1">
+      <h1 className="font-bold">{topicTitle}</h1>
       <h1>{formatTime()}</h1>
 
-      <button onClick={() => setIsRunning(true)} disabled={isRunning} className="mr-1">
-        <p>Start</p>
-      </button>
-
-      <button onClick={() => setIsRunning(false)} disabled={!isRunning} className="mr-1">
-        <p>Stop</p>
+      <button
+        onClick={() => {
+          setIsRunning(!isRunning);
+        }}
+        className={`mr-1 ${isRunning ? "text-red-700" : "text-green-700"}`}
+      >
+        <p>{isRunning ? "Stop" : "Start"}</p>
       </button>
 
       <button
