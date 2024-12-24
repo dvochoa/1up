@@ -2,7 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 
-const Timer = ({ topicTitle }: { topicTitle: string }) => {
+export interface TimerProps {
+  id: number;
+  title: string;
+  backgroundColor: string;
+}
+
+export const Timer: React.FC<TimerProps> = ({ title, backgroundColor }) => {
   const [time, setTime] = useState(0); // Time in milliseconds
   const [isRunning, setIsRunning] = useState(false);
 
@@ -30,31 +36,30 @@ const Timer = ({ topicTitle }: { topicTitle: string }) => {
 
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${String(milliseconds).padStart(2, "0")}`;
   };
-
   return (
-    <div className="m-1">
-      <h1 className="font-bold">{topicTitle}</h1>
-      <h1>{formatTime()}</h1>
+    <div className={`m-2 rounded ${backgroundColor}`}>
+      <div className="m-2 py-1">
+        <h1 className="font-bold">{title}</h1>
+        <h1>{formatTime()}</h1>
 
-      <button
-        onClick={() => {
-          setIsRunning(!isRunning);
-        }}
-        className={`mr-1 ${isRunning ? "text-red-700" : "text-green-700"}`}
-      >
-        <p>{isRunning ? "Stop" : "Start"}</p>
-      </button>
+        <button
+          onClick={() => {
+            setIsRunning(!isRunning);
+          }}
+          className={`mr-1 ${isRunning ? "text-red-700" : "text-green-700"}`}
+        >
+          <p>{isRunning ? "Stop" : "Start"}</p>
+        </button>
 
-      <button
-        onClick={() => {
-          setIsRunning(false);
-          setTime(0);
-        }}
-      >
-        <p>Reset</p>
-      </button>
+        <button
+          onClick={() => {
+            setIsRunning(false);
+            setTime(0);
+          }}
+        >
+          <p>Reset</p>
+        </button>
+      </div>
     </div>
   );
 };
-
-export default Timer;
