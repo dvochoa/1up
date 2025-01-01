@@ -10,11 +10,15 @@ The backend is built with Go using the [Gin framework](https://gin-gonic.com/).
 
 ## Development
 
-After initial download you'll want to run `npm install` to install all dependencies locally. These will be available in the `node_modules` directory.
+Frontend code is placed in the `./frontend/` directory whereas backend code is placed in the `./backend/` directory.
+
+After initial download you'll want to `cd frontend` and run `npm install` to install all frontend dependencies locally. These will be available in the `node_modules` directory.
 
 Use the following scripts during development:
 
 **Frontend:**
+
+Note: All of these commands must be ran from the `./frontend/` directory.
 
 - Run `npm run dev` to start a local instance of the frontend on `localhost:3000`.
 - Run `npm run test` to run the entire frontend test suite.
@@ -23,12 +27,15 @@ Use the following scripts during development:
 
 **Backend:**
 
-- Navigate to `/backend` and run `go run backend` to start a local instance of the backend on port `8080`.
+Note: All of these commands must be ran from the `./backend/` directory.
+
+- Run `go run backend` to start a local instance of the backend on port `8080`.
 
 ## Troubleshooting
 
 If you experience issues that might be related to cached files (e.g. styling or other content representing previous changes) then try the following:
 
-1. Delete your local `node_modules` and `.next` directories: `rm -rf node_modules .next`
-2. Reinstall: `npm install`
-3. Re-run: `npm run dev`
+1. `cd frontend`
+2. Delete your local `node_modules` and `.next` directories: `rm -rf node_modules .next`
+3. Reinstall: `npm install`
+4. Re-run: `npm run dev`

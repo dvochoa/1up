@@ -7,6 +7,9 @@ jobs:
   linting:
     name: Testing
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
     steps:
       - name: Setup Node
         uses: actions/setup-node@v4

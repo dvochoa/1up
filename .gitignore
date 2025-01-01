@@ -1,8 +1,9 @@
-# dependencies
-/node_modules
-
-# next.js
-/.next/
-
 # vscode
-/.vscode/
+**/.vscode/
+
+# Frontend
+## dependencies
+/frontend/node_modules/
+
+## next.js
+/frontend/.next/
