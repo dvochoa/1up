@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+changed_frontend_files=$(git diff --cached --name-only --diff-filter=ACMR | grep "frontend/.*")
+
+if [[ ! -z "changed_frontend_files" ]]
+then
+    cd frontend
+    npm run lint:fix
+    cd ..
+    git add $changed_frontend_files
+fi

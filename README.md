@@ -31,6 +31,19 @@ Note: All of these commands must be ran from the `./backend/` directory.
 
 - Run `go run backend` to start a local instance of the backend on port `8080`.
 
+### CI
+This repo uses [Github Actions](https://github.com/features/actions) to configure CI workflows that enforce testing and code style compliance.
+
+You can set up automatic code formatting on commit using a [pre-commit hook](https://github.com/dvochoa/1up/tree/main/.githooks/pre-commit).
+
+To set up the hook, run:
+
+```shell
+git config core.hooksPath .githooks
+```
+
+**Note**: The pre-commit hook will add some noticeable latency to each commit and changing the hooksPath in your local git config will override the directory which looks to for hooks. If you have any pre-existing hooks that you still want to use, instead of changing the hooksPath you can copy the contents of any hooks in `.githooks/` to your existing local hooks directory at `.git/hooks`.
+
 ## Troubleshooting
 
 If you experience issues that might be related to cached files (e.g. styling or other content representing previous changes) then try the following:
