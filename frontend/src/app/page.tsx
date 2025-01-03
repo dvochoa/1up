@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { TimerProps, Timer } from "@/components/timer/timer";
+import { TimerProps } from "@/components/timer/timer";
 import TimerList from "@/components/timer-list/timer-list";
 
 interface BackendTimer {
@@ -38,16 +38,7 @@ export default function HomePage() {
       <meta charSet="utf-8"></meta>
       <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
       <main>
-        <TimerList timers={timers}>
-          {timers.map((timer) => (
-            <Timer
-              title={timer.title}
-              id={timer.id}
-              key={timer.id}
-              backgroundColor={timer.backgroundColor}
-            ></Timer>
-          ))}
-        </TimerList>
+        <TimerList timers={timers}></TimerList>
       </main>
     </div>
   );
