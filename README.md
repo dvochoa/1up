@@ -30,6 +30,7 @@ Note: All of these commands must be ran from the `./frontend/` directory.
 Note: All of these commands must be ran from the `./backend/` directory.
 
 - Run `go run backend` to start a local instance of the backend on port `8080`.
+- Run `go test ./...` to run the entire backend test suite.
 
 ### CI
 This repo uses [Github Actions](https://github.com/features/actions) to configure CI workflows that enforce testing and code style compliance.
