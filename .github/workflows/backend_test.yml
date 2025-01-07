@@ -1,0 +1,26 @@
+# Workflow to ensure that all backend tests pass
+name: Backend Test
+
+on: pull_request
+
+jobs:
+  test:
+    name: Backend Testing
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+            go-version-file: backend/go.mod
+
+      - name: Install Dependencies
+        run: go mod download
+
+      - name: Run tests
+        run: go test ./... -v

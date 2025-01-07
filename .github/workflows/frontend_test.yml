@@ -1,11 +1,11 @@
-# Workflow to ensure that all tests pass
-name: Test
+# Workflow to ensure that all frontend tests pass
+name: Frontend Test
 
 on: pull_request
 
 jobs:
-  linting:
-    name: Testing
+  test:
+    name: Frontend Testing
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -16,9 +16,12 @@ jobs:
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
+
       - name: Code Checkout
         uses: actions/checkout@v4
+
       - name: Install Dependencies
         run: npm ci
+
       - name: Run tests
         run: npm run test
