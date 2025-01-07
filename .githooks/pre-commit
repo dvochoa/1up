@@ -1,11 +1,23 @@
 #!/usr/bin/env bash
 
-changed_frontend_files=$(git diff --cached --name-only --diff-filter=ACMR | grep "frontend/.*")
+DRY_RUN=false
 
-if [[ ! -z "changed_frontend_files" ]]
-then
-    cd frontend
-    npm run lint:fix
-    cd ..
-    git add $changed_frontend_files
+while getopts "d" opt; do
+    case "$opt" in
+        d) DRY_RUN=true ;;
+    esac
+done
+
+changed_frontend_files=$(git diff --staged --name-only --diff-filter=ACMR | grep "frontend/.*")
+
+if [[ ! -z $changed_frontend_files ]]; then
+    if [ $DRY_RUN = true ]; then
+        echo "The following files were found to have changed and would have triggered linting"
+        echo $changed_frontend_files
+    else
+        cd frontend
+        npm run lint:fix
+        cd ..
+        git add $changed_frontend_files
+    fi
 fi
