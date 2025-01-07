@@ -16,9 +16,12 @@ jobs:
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
+
       - name: Code Checkout
         uses: actions/checkout@v4
+
       - name: Install Dependencies
         run: npm ci
+
       - name: Code Linting
         run: npm run lint
