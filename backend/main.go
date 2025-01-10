@@ -7,20 +7,20 @@ import (
 )
 
 func main() {
-    router := gin.Default()
+	router := gin.Default()
 
-    // CORS Configuration
-    config := cors.DefaultConfig()
-    config.AllowOrigins = []string{"http://localhost:3000"}
-    config.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
-    config.ExposeHeaders = []string{"Content-Length"}
-    config.AllowCredentials = true
-    
-    // Apply CORS middleware
-    router.Use(cors.New(config))
+	// CORS Configuration
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:3000"}
+	config.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
+	config.ExposeHeaders = []string{"Content-Length"}
+	config.AllowCredentials = true
 
-    // Specify routes
-    router.GET("/timers", handlers.TimersHandler)
+	// Apply CORS middleware
+	router.Use(cors.New(config))
 
-    router.Run("localhost:8080")
+	// Specify routes
+	router.GET("/timers", handlers.TimersHandler)
+
+	router.Run("localhost:8080")
 }
