@@ -21,9 +21,10 @@ func TestHandlerReturnsTimers(t *testing.T) {
 	assert.EqualValues(t, http.StatusOK, responseWriter.Code)
 
 	var result TimerResponse
-	json.Unmarshal(responseWriter.Body.Bytes(), &result)
-	timers = result.Timers
+	err := json.Unmarshal(responseWriter.Body.Bytes(), &result)
+	assert.Nil(t, err)
 
+	timers = result.Timers
 	assert.Equal(t, timers[0], Timer{Id: 1, Title: "Coding"})
 	assert.Equal(t, timers[1], Timer{Id: 2, Title: "Music Production"})
 	assert.Equal(t, timers[2], Timer{Id: 3, Title: "DJing"})
