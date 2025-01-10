@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/dvochoa/1up/handlers"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -22,5 +24,11 @@ func main() {
 	// Specify routes
 	router.GET("/timers", handlers.TimersHandler)
 
-	router.Run("localhost:8080")
+	log.Default()
+
+	// Start the server
+	if err := router.Run("localhost:8080"); err != nil {
+		log.Println("Failed to start the server:", err)
+		return
+	}
 }

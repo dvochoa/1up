@@ -1,26 +1,26 @@
 # Workflow to ensure that all frontend tests pass
-name: Frontend Test
+name: Frontend test
 
 on: pull_request
 
 jobs:
   test:
-    name: Frontend Testing
+    name: test
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./frontend
     steps:
+      - name: Code checkout
+        uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
 
-      - name: Code Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm ci
 
       - name: Run tests
