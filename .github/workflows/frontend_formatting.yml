@@ -1,11 +1,11 @@
-# Workflow to enforce best practices in the frontend
-name: Frontend lint
+# Workflow to enforce frontend code formatting
+name: Frontend formatting
 
 on: pull_request
 
 jobs:
-  linting:
-    name: lint
+  formatting:
+    name: format
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -23,5 +23,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Code Linting
-        run: npm run lint
+      - name: Check formatting
+        run: npx prettier . --check
