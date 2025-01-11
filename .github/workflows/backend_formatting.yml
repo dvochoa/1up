@@ -1,0 +1,29 @@
+# Workflow to enforce backend code formatting
+name: Backend formatting
+
+on: pull_request
+
+jobs:
+  formatting:
+    name: format
+    runs-on: ubuntu-latest
+    defaults:
+        run:
+          working-directory: ./backend
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+            go-version-file: backend/go.mod
+
+      - name: Check formatting
+        run: |
+          if [ -n "$(gofmt -l .)" ]; then
+            echo "The following files are not formatted properly:"
+            gofmt -l .
+            echo "Please run 'go fmt ./...' to format your code."
+            exit 1
+          fi

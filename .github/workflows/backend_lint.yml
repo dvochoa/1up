@@ -1,4 +1,4 @@
-# Workflow to enforce best practices
+# Workflow to enforce best practices in the backend
 name: Backend lint
 
 on: pull_request
