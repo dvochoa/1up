@@ -14,11 +14,12 @@ changed_backend_files=$(echo "$changed_files" | grep "backend/.*")
 
 if [[ ! -z $changed_frontend_files ]]; then
     if [ $DRY_RUN = true ]; then
-        echo "The following files were found to have changed and would have triggered a formatting error"
+        echo "The following frontend files were found to have changed"
         echo $changed_frontend_files
     else
         cd frontend
         npm run lint:fix
+        echo "$changed_frontend_files" | xargs ./node_modules/.bin/prettier --ignore-unknown --write
         cd ..
         git add $changed_frontend_files
     fi
@@ -26,10 +27,16 @@ fi
 
 if [[ ! -z $changed_backend_files ]]; then
     if [ $DRY_RUN = true ]; then
-        echo "The following files were found to have changed and would have triggered a formatting error"
+        echo "The following backend files were found to have changed"
         echo $changed_backend_files
     else
+        if ! command -v golangci-lint &> /dev/null; then
+            echo "Could not find the golangci-lint command. Please install locally per instructions here: https://golangci-lint.run/welcome/install/#local-installation"
+            exit 1
+        fi
+
         cd backend
+        golangci-lint run --fix
         go fmt ./...
         cd ..
         git add $changed_backend_files
