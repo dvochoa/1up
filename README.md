@@ -10,6 +10,11 @@ The backend is built with Go using the [Gin framework](https://gin-gonic.com/).
 
 ## Development
 
+### Prerequsites
+Make sure you have the following installed locally:
+- [go](https://go.dev/doc/install)
+- [npm](https://nodejs.org/en/download)
+
 Frontend code is placed in the `./frontend/` directory whereas backend code is placed in the `./backend/` directory.
 
 After initial download you'll want to `cd frontend` and run `npm install` to install all frontend dependencies locally. These will be available in the `node_modules` directory.
