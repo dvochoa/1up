@@ -14,10 +14,11 @@ The backend is built with Go using the [Gin framework](https://gin-gonic.com/).
 Make sure you have the following installed locally:
 - [go](https://go.dev/doc/install)
 - [npm](https://nodejs.org/en/download)
+- [docker desktop](https://www.docker.com/products/docker-desktop/)
 
 Frontend code is placed in the `./frontend/` directory whereas backend code is placed in the `./backend/` directory.
 
-After initial download you'll want to `cd frontend` and run `npm install` to install all frontend dependencies locally. These will be available in the `node_modules` directory.
+You can deploy the site locally by running `docker compose up` after which it will be accessible from `localhost:3000`.
 
 Use the following scripts during development:
 
@@ -25,7 +26,9 @@ Use the following scripts during development:
 
 Note: All of these commands must be ran from the `./frontend/` directory.
 
-- Run `npm run dev` to start a local instance of the frontend on `localhost:3000`.
+After initial download you'll want to run `npm install` to install all frontend dependencies locally. These will be available in the `node_modules` directory.
+
+- Run `npm run dev` to deploy the frontend locally on `localhost:3000`.
 - Run `npm run test` to run the entire frontend test suite.
 - Run `npm run lint` to run the frontend linter.
   - The linter uses [prettier](https://prettier.io/) for code formatting
@@ -34,7 +37,7 @@ Note: All of these commands must be ran from the `./frontend/` directory.
 
 Note: All of these commands must be ran from the `./backend/` directory.
 
-- Run `go run backend` to start a local instance of the backend on port `8080`.
+- Run `go run main.go` to deploy the backend locally on `localhost:8080`.
 - Run `go test ./...` to run the entire backend test suite.
 
 ### CI
