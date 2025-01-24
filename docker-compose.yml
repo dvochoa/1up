@@ -5,9 +5,9 @@ services:
     ports:
       - "8080:8080"
 
-  frontend:
+  client:
     build:
-      context: frontend
+      context: client
     ports:
       - "3000:3000"
     depends_on:

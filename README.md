@@ -16,7 +16,7 @@ Make sure you have the following installed locally:
 - [npm](https://nodejs.org/en/download)
 - [docker desktop](https://www.docker.com/products/docker-desktop/)
 
-Frontend code is placed in the `./frontend/` directory whereas backend code is placed in the `./backend/` directory.
+Frontend code is placed in the `./client/` directory whereas backend code is placed in the `./backend/` directory.
 
 You can deploy the site locally by running `docker compose up` after which it will be accessible from `localhost:3000`.
 
@@ -24,9 +24,9 @@ Use the following scripts during development:
 
 **Frontend:**
 
-Note: All of these commands must be ran from the `./frontend/` directory.
+Note: All of these commands must be ran from the `./client/` directory.
 
-After initial download you'll want to run `npm install` to install all frontend dependencies locally. These will be available in the `node_modules` directory.
+After initial download you'll want to run `npm install` to install all client dependencies locally. These will be available in the `node_modules` directory.
 
 - Run `npm run dev` to deploy the frontend locally on `localhost:3000`.
 - Run `npm run test` to run the entire frontend test suite.
@@ -57,7 +57,7 @@ git config core.hooksPath .githooks
 
 If you experience issues that might be related to cached files (e.g. styling or other content representing previous changes) then try the following:
 
-1. `cd frontend`
+1. `cd client`
 2. Delete your local `node_modules` and `.next` directories: `rm -rf node_modules .next`
 3. Reinstall: `npm install`
 4. Re-run: `npm run dev`
