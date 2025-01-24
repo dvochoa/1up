@@ -3,7 +3,7 @@
 
 # Frontend
 ## dependencies
-/frontend/node_modules/
+/client/node_modules/
 
 ## next.js
-/frontend/.next/
+/client/.next/

@@ -1,5 +1,5 @@
 # Workflow to enforce frontend code formatting
-name: Frontend formatting
+name: Client formatting
 
 on: pull_request
 
@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./frontend
+        working-directory: ./client
     steps:
       - name: Code checkout
         uses: actions/checkout@v4

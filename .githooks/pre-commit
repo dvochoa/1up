@@ -9,19 +9,19 @@ while getopts "d" opt; do
 done
 
 changed_files=$(git diff --staged --name-only --diff-filter=ACMR)
-changed_frontend_files=$(echo "$changed_files" | grep "frontend/.*")
+changed_client_files=$(echo "$changed_files" | grep "client/.*")
 changed_backend_files=$(echo "$changed_files" | grep "backend/.*")
 
-if [[ ! -z $changed_frontend_files ]]; then
+if [[ ! -z $changed_client_files ]]; then
     if [ $DRY_RUN = true ]; then
-        echo "The following frontend files were found to have changed"
-        echo $changed_frontend_files
+        echo "The following client files were found to have changed"
+        echo $changed_client_files
     else
-        cd frontend
+        cd client
         npm run lint:fix
-        echo "$changed_frontend_files" | xargs ./node_modules/.bin/prettier --ignore-unknown --write
+        echo "$changed_client_files" | xargs ./node_modules/.bin/prettier --ignore-unknown --write
         cd ..
-        git add $changed_frontend_files
+        git add $changed_client_files
     fi
 fi
 
