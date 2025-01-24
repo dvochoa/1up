@@ -24,10 +24,8 @@ func main() {
 	// Specify routes
 	router.GET("/timers", handlers.TimersHandler)
 
-	log.Default()
-
 	// Start the server
-	if err := router.Run("localhost:8080"); err != nil {
+	if err := router.Run(":8080"); err != nil {
 		log.Println("Failed to start the server:", err)
 		return
 	}

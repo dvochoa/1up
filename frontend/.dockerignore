@@ -1,0 +1,20 @@
+# Docker
+Dockerfile
+.dockerignore
+
+# React
+node_modules
+
+# NextJS
+.next
+
+# Testing
+**/*.test.tsx
+jest.config.ts
+jest.setup.ts
+
+# Formatting
+.prettierrc.json
+
+# Linting
+eslint.config.mjs
