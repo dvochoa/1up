@@ -14,7 +14,7 @@ The backend is built with Go using the [Gin framework](https://gin-gonic.com/).
 Make sure you have the following installed locally:
 - [go](https://go.dev/doc/install)
 - [npm](https://nodejs.org/en/download)
-- [docker desktop](https://www.docker.com/products/docker-desktop/)
+- [docker](https://www.docker.com/products/docker-desktop/)
 
 Frontend code is placed in the `./client/` directory whereas backend code is placed in the `./backend/` directory.
 
