@@ -14,12 +14,12 @@ changed_backend_files=$(echo "$changed_files" | grep "backend/.*")
 
 if [[ ! -z $changed_client_files ]]; then
     if [ $DRY_RUN = true ]; then
-        echo "The following client files were found to have changed"
+        echo "The following client files have changed"
         echo $changed_client_files
     else
         cd client
         npm run lint:fix
-        echo "$changed_client_files" | xargs ./node_modules/.bin/prettier --ignore-unknown --write
+        echo "$changed_client_files" | xargs ./node_modules/.bin/prettier --no-error-on-unmatched-pattern --ignore-unknown --write
         cd ..
         git add $changed_client_files
     fi
@@ -27,7 +27,7 @@ fi
 
 if [[ ! -z $changed_backend_files ]]; then
     if [ $DRY_RUN = true ]; then
-        echo "The following backend files were found to have changed"
+        echo "The following backend files have changed"
         echo $changed_backend_files
     else
         if ! command -v golangci-lint &> /dev/null; then
