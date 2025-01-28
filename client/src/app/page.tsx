@@ -16,8 +16,9 @@ export default function HomePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8080/timers");
+        const response = await fetch("http://192.168.4.47:8080/timers");
         const jsonResponse = await response.json();
+        console.log(jsonResponse);
         const parsedTimers: TimerProps[] = await jsonResponse.timers.map((timer: BackendTimer) => ({
           id: timer.id,
           title: timer.title,
