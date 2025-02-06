@@ -1,8 +1,10 @@
 {
   "scripts": {
+    "build": "next build",
     "dev": "next dev --turbopack",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
+    "start": "next start",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {

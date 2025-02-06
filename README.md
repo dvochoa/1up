@@ -10,7 +10,7 @@ The backend is built with Go using the [Gin framework](https://gin-gonic.com/).
 
 ## Development
 
-### Prerequsites
+### Prerequisites
 Make sure you have the following installed locally:
 - [go](https://go.dev/doc/install)
 - [npm](https://nodejs.org/en/download)
@@ -18,7 +18,13 @@ Make sure you have the following installed locally:
 
 Frontend code is placed in the `./client/` directory whereas backend code is placed in the `./backend/` directory.
 
-You can deploy the site locally by running `docker compose up` after which it will be accessible from `localhost` or the ip address of your local network if accessing from a machine other than the one used to run docker.
+You can deploy the site locally by running: 
+- `docker compose up --build`: For production
+- `docker compose --env-file .env.dev up --build`: For development
+
+Development will come with helpful features such as hot reloading but will be a more bloated build.
+
+In either case, after deploying the site will be accessible from `localhost` or the IP address of your local network if accessing from a machine other than the one used to run docker.
 
 Use the following scripts during development:
 
