@@ -12,6 +12,7 @@ services:
   client:
     build:
       context: client
+      target: ${CLIENT_ENV}
     ports:
       - "3000:3000"
     depends_on:
