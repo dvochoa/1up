@@ -7,7 +7,7 @@ EXPOSE 3000
 
 # Run in development
 FROM base as dev
-CMD ["npm", "run", "fart"]
+CMD ["npm", "run", "dev"]
 
 # Run in production
 FROM base as prod
