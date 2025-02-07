@@ -20,7 +20,7 @@ Frontend code is placed in the `./client/` directory whereas backend code is pla
 
 You can deploy the site locally by running: 
 - `docker compose up --build`: For production
-- `docker compose --env-file .env.dev up --build`: For development
+- `docker compose -f compose.yaml -f compose.dev.yaml up --build`: For development
 
 Development will come with helpful features such as hot reloading but will be a more bloated build.
 
