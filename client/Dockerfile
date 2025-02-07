@@ -3,13 +3,14 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-EXPOSE 3000
 
 # Run in development
 FROM base as dev
+EXPOSE 3000
 CMD ["npm", "run", "dev"]
 
 # Run in production
 FROM base as prod
 RUN npm run build
+EXPOSE 3000
 CMD ["npm", "run", "start"]
