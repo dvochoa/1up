@@ -6,3 +6,11 @@ services:
     volumes:
       - ./client:/app
       - /app/node_modules
+
+  backend:
+    build:
+      context: backend
+      target: dev
+    volumes:
+      - ./backend:/app
+      - /app/tmp
