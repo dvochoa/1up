@@ -4,6 +4,8 @@
  * @type {import('next').NextConfig}
  */
 const nextConfig = {
+  // TODO: What does this do?
+  output: "standalone",
   webpack: (config, { dev }) => {
     if (dev) {
       config.watchOptions = {
