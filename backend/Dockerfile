@@ -8,7 +8,7 @@ COPY go.* ./
 RUN go mod download
 COPY . .
 EXPOSE 8080
-CMD ["air"]
+CMD air
 
 # Build in separate stage to minimize size of prod container
 FROM base AS builder
@@ -16,6 +16,8 @@ COPY go.* ./
 RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -o 1up
+
+# TODO: Should I also set group and user here?
 
 # Run in production
 FROM scratch AS prod

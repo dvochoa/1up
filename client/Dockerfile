@@ -7,41 +7,39 @@ RUN npm ci
 
 # Run in development
 FROM deps AS dev
-# TODO: is this needed?
 COPY . .
 EXPOSE 3000
-CMD ["npm", "run", "dev"]
+CMD npm run dev
 
 # Build in separate stage to minimize size of prod container
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 # Run in production
 FROM base AS prod
-
-# TODO: What does this do?
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# TODO: What does this do?
+# Add system group & user
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# TODO: What does this do
 # Copy the bundled code from the build stage to the production image
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# TODO: What does this do?
-# Set correct permissions
+# TODO: How is this setting both ownership and permission?
+# Set ownership and permission
 RUN chown -R nextjs:nodejs /app
 
-# TODO: What does this do?
+# Set user to run the service
 USER nextjs
 
 EXPOSE 3000
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
-CMD ["node", "server.js"]
+CMD node server.js
