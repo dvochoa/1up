@@ -2,7 +2,7 @@
 Dockerfile
 .dockerignore
 
-# React
+# Node
 node_modules
 
 # NextJS

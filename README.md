@@ -13,7 +13,7 @@ The backend is built with Go using the [Gin framework](https://gin-gonic.com/).
 ### Prerequisites
 Make sure you have the following installed locally:
 - [go](https://go.dev/doc/install)
-- [npm](https://nodejs.org/en/download)
+- [pnpm](https://pnpm.io/installation)
 - [docker](https://www.docker.com/products/docker-desktop/)
 
 Frontend code is placed in the `./client/` directory whereas backend code is placed in the `./backend/` directory.
@@ -32,10 +32,10 @@ Use the following scripts during development:
 
 Note: All of these commands must be ran from the `./client/` directory.
 
-After initial download you'll want to run `npm install` to install all client dependencies locally. These will be available in the `node_modules` directory.
+After initial download you'll want to run `pnpm install` to install all client dependencies locally. These will be available in the `node_modules` directory.
 
-- Run `npm run test` to run the entire frontend test suite.
-- Run `npm run lint` to run the frontend linter.
+- Run `pnpm run test` to run the entire frontend test suite.
+- Run `pnpm run lint` to run the frontend linter.
   - The linter uses [prettier](https://prettier.io/) for code formatting
 
 **Backend:**
