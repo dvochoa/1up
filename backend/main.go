@@ -11,7 +11,9 @@ func main() {
 	router := gin.Default()
 
 	// Specify routes
-	router.GET("/timers", handlers.TimersHandler)
+	router.GET("/timers", handlers.GetTimers)
+	router.GET("/timers/:id", handlers.GetTimerById)
+	router.POST("/timers", handlers.AddTimer)
 
 	// Start the server
 	if err := router.Run("0.0.0.0:8080"); err != nil {
