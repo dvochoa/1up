@@ -26,6 +26,8 @@ Development will come with helpful features such as hot reloading but will be a 
 
 In either case, after deploying the site will be accessible from `localhost` or the IP address of your local network if accessing from a machine other than the one used to run docker.
 
+A number of environment variables need to be set in order for the application to work as expected. When first building the app you should create a `.env` at the root level, look at `.env.example` for an example.
+
 Use the following scripts during development:
 
 **Frontend:**
@@ -43,6 +45,7 @@ After initial download you'll want to run `pnpm install` to install all client d
 Note: All of these commands must be ran from the `./backend/` directory.
 
 - Run `go test ./...` to run the entire backend test suite.
+- Run `go run main.go` to launch the backend locally.
 
 ### CI
 This repo uses [Github Actions](https://github.com/features/actions) to configure CI workflows that enforce testing and code style compliance.
