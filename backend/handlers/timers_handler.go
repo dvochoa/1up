@@ -2,52 +2,58 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/dvochoa/1up/db"
+	"github.com/dvochoa/1up/models"
 	"github.com/gin-gonic/gin"
 )
 
-type Timer struct {
-	Id    int    `json:"id"`
-	Title string `json:"title"`
-}
+var TimerStore db.TimerStore
 
-type GetTimersResponse struct {
-	Timers []Timer `json:"timers"`
-}
-
-var timers = []Timer{
-	{Id: 1, Title: "Coding"},
-	{Id: 2, Title: "Music Production"},
-	{Id: 3, Title: "DJing"},
-	{Id: 4, Title: "Piano"},
-}
-
+// GetTimers returns all timers
 func GetTimers(c *gin.Context) {
-	response := GetTimersResponse{Timers: timers}
-	c.JSON(http.StatusOK, response)
-}
-
-func GetTimerById(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-
-	for _, t := range timers {
-		if t.Id == id {
-			c.IndentedJSON(http.StatusOK, t)
-			return
-		}
-	}
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("timer with id=%d not found", id)})
-}
-
-func AddTimer(c *gin.Context) {
-	var newTimer Timer
-
-	if err := c.BindJSON(&newTimer); err != nil {
+	timers, err := TimerStore.GetTimers(c.Request.Context())
+	if err != nil {
+		log.Printf("CollectRows error: %v", err)
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Failed to get timers"})
 		return
 	}
 
-	timers = append(timers, newTimer)
-	c.IndentedJSON(http.StatusCreated, newTimer)
+	response := models.GetTimersResponse{Timers: timers}
+	c.IndentedJSON(http.StatusOK, response)
+}
+
+// GetTimerById returns the timer with matching id, if any
+func GetTimerById(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	timer, err := TimerStore.GetTimerById(c.Request.Context(), id)
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("timer with id=%d not found", id)})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, timer)
+}
+
+// CreateTimer inserts a new timer in the db
+func CreateTimer(c *gin.Context) {
+	var newTimer models.Timer
+
+	if err := c.BindJSON(&newTimer); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := TimerStore.CreateTimer(c.Request.Context(), &newTimer)
+	if err != nil {
+		log.Printf("Error when creating timer %v: %v", newTimer, err)
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Failed to create timer"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, newTimer)
 }

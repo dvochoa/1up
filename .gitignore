@@ -10,3 +10,6 @@
 
 # misc
 tmp
+
+# db
+.env
