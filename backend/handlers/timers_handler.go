@@ -1,11 +1,22 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5"
+)
+
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "postgres"
+	password = "fake_password"
+	dbname   = "oneup"
 )
 
 type Timer struct {
@@ -25,6 +36,42 @@ var timers = []Timer{
 }
 
 func GetTimers(c *gin.Context) {
+	// urlExample := "postgres://username:password@localhost:5432/database_name"
+	conn, err := pgx.Connect(context.Background(), fmt.Sprintf("postgres://%s:%s@%s:%d/%s", user, password, host, port, dbname))
+	// conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
+	}
+	defer conn.Close(context.Background())
+
+	rows, err := conn.Query(context.Background(), "select id, title from timers")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Query: %v\n", err)
+		os.Exit(1)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var id int
+		var title string
+
+		err = rows.Scan(&id, &title)
+		if err != nil {
+			fmt.Printf("Scan error: %v", err)
+			return
+		}
+
+		fmt.Println(id, title)
+	}
+
+	// The first error encountered by the original Query call, rows.Next or rows.Scan will be returned here.
+	if rows.Err() != nil {
+		fmt.Printf("rows error: %v", rows.Err())
+		return
+	}
+
+	// Still returns stubbed response for now
 	response := GetTimersResponse{Timers: timers}
 	c.JSON(http.StatusOK, response)
 }
