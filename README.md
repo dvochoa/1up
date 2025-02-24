@@ -43,6 +43,7 @@ After initial download you'll want to run `pnpm install` to install all client d
 Note: All of these commands must be ran from the `./backend/` directory.
 
 - Run `go test ./...` to run the entire backend test suite.
+- Run `go run main.go` to launch the backend locally.
 
 ### CI
 This repo uses [Github Actions](https://github.com/features/actions) to configure CI workflows that enforce testing and code style compliance.
