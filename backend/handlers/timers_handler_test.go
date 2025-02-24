@@ -32,7 +32,7 @@ func TestGetTimers(t *testing.T) {
 	err := json.Unmarshal(responseWriter.Body.Bytes(), &result)
 	assert.Nil(t, err)
 
-	timers = result.Timers
+	timers := result.Timers
 	assert.Equal(t, Timer{Id: 1, Title: "Coding"}, timers[0])
 	assert.Equal(t, Timer{Id: 2, Title: "Music Production"}, timers[1])
 	assert.Equal(t, Timer{Id: 3, Title: "DJing"}, timers[2])

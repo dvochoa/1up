@@ -15,10 +15,11 @@ const (
 	host     = "localhost"
 	port     = 5432
 	user     = "postgres"
-	password = "fake_password"
+	password = "fake_password" // TODO: Change this to real password but don't commit with it
 	dbname   = "oneup"
 )
 
+// TODO: What is the json here? Its called a struct tag?
 type Timer struct {
 	Id    int    `json:"id"`
 	Title string `json:"title"`
@@ -28,7 +29,7 @@ type GetTimersResponse struct {
 	Timers []Timer `json:"timers"`
 }
 
-var timers = []Timer{
+var fakeTimers = []Timer{
 	{Id: 1, Title: "Coding"},
 	{Id: 2, Title: "Music Production"},
 	{Id: 3, Title: "DJing"},
@@ -45,33 +46,13 @@ func GetTimers(c *gin.Context) {
 	}
 	defer conn.Close(context.Background())
 
-	rows, err := conn.Query(context.Background(), "select id, title from timers")
+	rows, _ := conn.Query(context.Background(), "select * from timers")
+	timers, err := pgx.CollectRows(rows, pgx.RowToStructByName[Timer])
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Query: %v\n", err)
+		fmt.Printf("CollectRows error: %v", err)
 		os.Exit(1)
 	}
-	defer rows.Close()
 
-	for rows.Next() {
-		var id int
-		var title string
-
-		err = rows.Scan(&id, &title)
-		if err != nil {
-			fmt.Printf("Scan error: %v", err)
-			return
-		}
-
-		fmt.Println(id, title)
-	}
-
-	// The first error encountered by the original Query call, rows.Next or rows.Scan will be returned here.
-	if rows.Err() != nil {
-		fmt.Printf("rows error: %v", rows.Err())
-		return
-	}
-
-	// Still returns stubbed response for now
 	response := GetTimersResponse{Timers: timers}
 	c.JSON(http.StatusOK, response)
 }
@@ -79,7 +60,7 @@ func GetTimers(c *gin.Context) {
 func GetTimerById(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
-	for _, t := range timers {
+	for _, t := range fakeTimers {
 		if t.Id == id {
 			c.IndentedJSON(http.StatusOK, t)
 			return
@@ -95,6 +76,6 @@ func AddTimer(c *gin.Context) {
 		return
 	}
 
-	timers = append(timers, newTimer)
+	fakeTimers = append(fakeTimers, newTimer)
 	c.IndentedJSON(http.StatusCreated, newTimer)
 }
