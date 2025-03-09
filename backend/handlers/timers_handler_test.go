@@ -17,12 +17,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var router *gin.Engine
+
 func TestMain(m *testing.M) {
-	// Set up
+	// Set up gin
 	gin.SetMode(gin.TestMode)
-	ctx := context.Background()
+	router = gin.Default()
+	router.GET("/timers", GetTimers)
+	router.GET("/timers/:id", GetTimerById)
+	router.POST("/timers", CreateTimer)
 
 	// Set up test db
+	ctx := context.Background()
 	_ = test_db.StartTestDatabase(ctx)
 	defer test_db.StopTestDatabase()
 
@@ -39,14 +45,11 @@ func TestMain(m *testing.M) {
 }
 
 func TestGetTimers(t *testing.T) {
-	// Create a test context
+	req, _ := http.NewRequest(http.MethodGet, "/timers", nil)
 	responseWriter := httptest.NewRecorder()
-	ctx, _ := gin.CreateTestContext(responseWriter)
-	req, _ := http.NewRequest("GET", "/timers", nil)
-	ctx.Request = req
+	router.ServeHTTP(responseWriter, req)
 
-	GetTimers(ctx)
-	assert.EqualValues(t, http.StatusOK, responseWriter.Code)
+	assert.Equal(t, http.StatusOK, responseWriter.Code)
 
 	var result models.GetTimersResponse
 	err := json.Unmarshal(responseWriter.Body.Bytes(), &result)
@@ -60,15 +63,11 @@ func TestGetTimers(t *testing.T) {
 }
 
 func TestGetTimerById(t *testing.T) {
-	// Create a test context
+	req, _ := http.NewRequest(http.MethodGet, "/timers/1", nil)
 	responseWriter := httptest.NewRecorder()
-	ctx, _ := gin.CreateTestContext(responseWriter)
-	req, _ := http.NewRequest("GET", "/timers/", nil)
-	ctx.Request = req
-	ctx.Params = []gin.Param{{Key: "id", Value: "1"}}
+	router.ServeHTTP(responseWriter, req)
 
-	GetTimerById(ctx)
-	assert.EqualValues(t, http.StatusOK, responseWriter.Code)
+	assert.Equal(t, http.StatusOK, responseWriter.Code)
 
 	var result models.Timer
 	err := json.Unmarshal(responseWriter.Body.Bytes(), &result)
@@ -79,43 +78,34 @@ func TestGetTimerById(t *testing.T) {
 
 func TestCreateTimer(t *testing.T) {
 	// 1. No timer with Id=5 is found
+	getReq, _ := http.NewRequest(http.MethodGet, "/timers/5", nil)
 	getResponseWriter := httptest.NewRecorder()
-	getCtx, _ := gin.CreateTestContext(getResponseWriter)
-	getReq, _ := http.NewRequest("GET", "/timers/", nil)
-	getCtx.Request = getReq
-	getCtx.Params = []gin.Param{{Key: "id", Value: "5"}}
+	router.ServeHTTP(getResponseWriter, getReq)
 
-	GetTimerById(getCtx)
 	assert.EqualValues(t, http.StatusNotFound, getResponseWriter.Code)
 
 	// 2. Create a timer
-	postResponseWriter := httptest.NewRecorder()
-	postCtx, _ := gin.CreateTestContext(postResponseWriter)
-
 	newTimer := models.Timer{Id: 5, Title: "Cooking"}
 	jsonValue, _ := json.Marshal(newTimer)
 
 	postReq, _ := http.NewRequest(http.MethodPost, "/timers", bytes.NewBuffer(jsonValue))
 	postReq.Header.Set("Content-Type", "application/json")
-	postCtx.Request = postReq
 
-	CreateTimer(postCtx)
+	postResponseWriter := httptest.NewRecorder()
+	router.ServeHTTP(postResponseWriter, postReq)
+
 	assert.EqualValues(t, http.StatusCreated, postResponseWriter.Code)
 
 	var result models.Timer
 	err := json.Unmarshal(postResponseWriter.Body.Bytes(), &result)
 	assert.Nil(t, err)
-
 	assert.Equal(t, models.Timer{Id: 5, Title: "Cooking"}, result)
 
 	// 3. Timer with Id=5 is found
+	getByIdReq, _ := http.NewRequest(http.MethodGet, "/timers/5", nil)
 	getByIdResponseWriter := httptest.NewRecorder()
-	getByIdCtx, _ := gin.CreateTestContext(getByIdResponseWriter)
-	getByIdReq, _ := http.NewRequest("GET", "/timers/", nil)
-	getByIdCtx.Request = getByIdReq
-	getByIdCtx.Params = []gin.Param{{Key: "id", Value: "5"}}
+	router.ServeHTTP(getByIdResponseWriter, getByIdReq)
 
-	GetTimerById(getByIdCtx)
 	assert.EqualValues(t, http.StatusOK, getByIdResponseWriter.Code)
 
 	err = json.Unmarshal(getByIdResponseWriter.Body.Bytes(), &result)
