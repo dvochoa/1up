@@ -67,7 +67,7 @@ func (store TimerStore) GetTimerById(ctx context.Context, id int) (models.Timer,
 	return timer, err
 }
 
-// CreateTimer inserts a new timer in the db
+// CreateTimer inserts a new timer into the timers table
 func (store TimerStore) CreateTimer(ctx context.Context, timer *models.Timer) error {
 	queryCtx, cancel := getQueryCtx(ctx)
 	defer cancel()
@@ -78,6 +78,23 @@ func (store TimerStore) CreateTimer(ctx context.Context, timer *models.Timer) er
 		timer.Title,
 	).Scan(&timer.Id)
 	return err
+}
+
+// DeleteTimer deletes the timer matching the specified int from the timers table
+func (store TimerStore) DeleteTimer(ctx context.Context, id int) error {
+	queryCtx, cancel := getQueryCtx(ctx)
+	defer cancel()
+
+	commandTag, err := store.conn.Exec(queryCtx, "DELETE FROM timers WHERE id=$1", id)
+
+	if err != nil {
+		return err
+	}
+	if commandTag.RowsAffected() != 1 {
+		return pgx.ErrNoRows
+	}
+
+	return nil
 }
 
 func getQueryCtx(ctx context.Context) (context.Context, context.CancelFunc) {
