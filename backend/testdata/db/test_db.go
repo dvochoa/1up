@@ -17,7 +17,7 @@ func StartTestDatabase(ctx context.Context) error {
 	var err error
 	pgContainer, err = postgres.Run(ctx,
 		"postgres:16-alpine",
-		postgres.WithInitScripts("../testdata/db/init-db.sql"),
+		postgres.WithInitScripts("testdata/db/init-db.sql"),
 		postgres.WithDatabase("test-db"),
 		postgres.WithUsername("postgres"),
 		postgres.WithPassword("postgres"),

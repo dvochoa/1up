@@ -1,4 +1,4 @@
-package handlers
+package main
 
 import (
 	"bytes"
@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/dvochoa/1up/db"
+	"github.com/dvochoa/1up/handlers"
 	"github.com/dvochoa/1up/models"
 	test_db "github.com/dvochoa/1up/testdata/db"
 
@@ -19,13 +20,11 @@ import (
 
 var router *gin.Engine
 
+// Runs before all tests
 func TestMain(m *testing.M) {
 	// Set up gin
 	gin.SetMode(gin.TestMode)
-	router = gin.Default()
-	router.GET("/timers", GetTimers)
-	router.GET("/timers/:id", GetTimerById)
-	router.POST("/timers", CreateTimer)
+	router = GetRouter()
 
 	// Set up test db
 	ctx := context.Background()
@@ -35,7 +34,7 @@ func TestMain(m *testing.M) {
 	connStr, _ := test_db.GetTestDatabaseConnection(ctx)
 	timerStore, _ := db.NewTimerStore(ctx, connStr)
 	defer timerStore.CloseConnection(ctx)
-	TimerStore = *timerStore
+	handlers.TimerStore = *timerStore
 
 	// Run tests
 	code := m.Run()
@@ -112,4 +111,18 @@ func TestCreateTimer(t *testing.T) {
 	assert.Nil(t, err)
 
 	assert.Equal(t, newTimer, result)
+}
+
+func TestDeleteTimer(t *testing.T) {
+	deleteReq, _ := http.NewRequest(http.MethodDelete, "/timers/1", nil)
+	deleteResponseWriter := httptest.NewRecorder()
+	router.ServeHTTP(deleteResponseWriter, deleteReq)
+
+	assert.Equal(t, http.StatusNoContent, deleteResponseWriter.Code)
+
+	getReq, _ := http.NewRequest(http.MethodGet, "/timers/1", nil)
+	getResponseWriter := httptest.NewRecorder()
+	router.ServeHTTP(getResponseWriter, getReq)
+
+	assert.EqualValues(t, http.StatusNotFound, getResponseWriter.Code)
 }

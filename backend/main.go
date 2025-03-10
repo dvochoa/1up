@@ -6,12 +6,15 @@ import (
 
 	"github.com/dvochoa/1up/db"
 	"github.com/dvochoa/1up/handlers"
+
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	router := gin.Default()
+	// Set up router
+	router := GetRouter()
 
+	// Set up database connection
 	connStr := db.GetDatabaseConnection()
 	ctx := context.Background()
 	timerStore, err := db.NewTimerStore(ctx, connStr)
@@ -21,14 +24,19 @@ func main() {
 	defer timerStore.CloseConnection(ctx)
 	handlers.TimerStore = *timerStore
 
-	// Specify routes
-	router.GET("/timers", handlers.GetTimers)
-	router.GET("/timers/:id", handlers.GetTimerById)
-	router.POST("/timers", handlers.CreateTimer)
-
 	// Start the server
 	if err := router.Run("0.0.0.0:8080"); err != nil {
 		log.Println("Failed to start the server:", err)
 		return
 	}
+}
+
+func GetRouter() *gin.Engine {
+	router := gin.Default()
+	router.GET("/timers", handlers.GetTimers)
+	router.GET("/timers/:id", handlers.GetTimerById)
+	router.POST("/timers", handlers.CreateTimer)
+	router.DELETE("/timers/:id", handlers.DeleteTimer)
+
+	return router
 }
