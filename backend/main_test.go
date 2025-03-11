@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -44,10 +45,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestGetTimers(t *testing.T) {
-	req, _ := http.NewRequest(http.MethodGet, "/timers", nil)
-	responseWriter := httptest.NewRecorder()
-	router.ServeHTTP(responseWriter, req)
-
+	responseWriter := serveHTTP(http.MethodGet, "/timers", nil)
 	assert.Equal(t, http.StatusOK, responseWriter.Code)
 
 	var result models.GetTimersResponse
@@ -62,37 +60,25 @@ func TestGetTimers(t *testing.T) {
 }
 
 func TestGetTimerById(t *testing.T) {
-	req, _ := http.NewRequest(http.MethodGet, "/timers/1", nil)
-	responseWriter := httptest.NewRecorder()
-	router.ServeHTTP(responseWriter, req)
-
+	responseWriter := serveHTTP(http.MethodGet, "/timers/1", nil)
 	assert.Equal(t, http.StatusOK, responseWriter.Code)
 
 	var result models.Timer
 	err := json.Unmarshal(responseWriter.Body.Bytes(), &result)
 	assert.Nil(t, err)
-
 	assert.Equal(t, models.Timer{Id: 1, Title: "Coding"}, result)
 }
 
 func TestCreateTimer(t *testing.T) {
 	// 1. No timer with Id=5 is found
-	getReq, _ := http.NewRequest(http.MethodGet, "/timers/5", nil)
-	getResponseWriter := httptest.NewRecorder()
-	router.ServeHTTP(getResponseWriter, getReq)
-
+	getResponseWriter := serveHTTP(http.MethodGet, "/timers/5", nil)
 	assert.EqualValues(t, http.StatusNotFound, getResponseWriter.Code)
 
 	// 2. Create a timer
 	newTimer := models.Timer{Id: 5, Title: "Cooking"}
 	jsonValue, _ := json.Marshal(newTimer)
 
-	postReq, _ := http.NewRequest(http.MethodPost, "/timers", bytes.NewBuffer(jsonValue))
-	postReq.Header.Set("Content-Type", "application/json")
-
-	postResponseWriter := httptest.NewRecorder()
-	router.ServeHTTP(postResponseWriter, postReq)
-
+	postResponseWriter := serveHTTP(http.MethodPost, "/timers", bytes.NewBuffer(jsonValue))
 	assert.EqualValues(t, http.StatusCreated, postResponseWriter.Code)
 
 	var result models.Timer
@@ -101,28 +87,68 @@ func TestCreateTimer(t *testing.T) {
 	assert.Equal(t, models.Timer{Id: 5, Title: "Cooking"}, result)
 
 	// 3. Timer with Id=5 is found
-	getByIdReq, _ := http.NewRequest(http.MethodGet, "/timers/5", nil)
-	getByIdResponseWriter := httptest.NewRecorder()
-	router.ServeHTTP(getByIdResponseWriter, getByIdReq)
-
+	getByIdResponseWriter := serveHTTP(http.MethodGet, "/timers/5", nil)
 	assert.EqualValues(t, http.StatusOK, getByIdResponseWriter.Code)
 
 	err = json.Unmarshal(getByIdResponseWriter.Body.Bytes(), &result)
 	assert.Nil(t, err)
-
 	assert.Equal(t, newTimer, result)
 }
 
-func TestDeleteTimer(t *testing.T) {
-	deleteReq, _ := http.NewRequest(http.MethodDelete, "/timers/1", nil)
-	deleteResponseWriter := httptest.NewRecorder()
-	router.ServeHTTP(deleteResponseWriter, deleteReq)
+func TestUpdateTimer_ExistingTimer(t *testing.T) {
+	// 1. Update timer
+	updatedTimer := models.Timer{Id: 1, Title: "Dancing"}
+	jsonValue, _ := json.Marshal(updatedTimer)
 
+	putResponseWriter := serveHTTP(http.MethodPut, "/timers/1", bytes.NewBuffer(jsonValue))
+	assert.EqualValues(t, http.StatusNoContent, putResponseWriter.Code)
+
+	// 2. Get timer
+	getResponseWriter := serveHTTP(http.MethodGet, "/timers/1", nil)
+	assert.Equal(t, http.StatusOK, getResponseWriter.Code)
+
+	var result models.Timer
+	err := json.Unmarshal(getResponseWriter.Body.Bytes(), &result)
+	assert.Nil(t, err)
+	assert.Equal(t, updatedTimer, result)
+}
+
+func TestUpdateTimer_NewTimer(t *testing.T) {
+	// 1. Update timer
+	updatedTimer := models.Timer{Id: 7, Title: "Dancing"}
+	jsonValue, _ := json.Marshal(updatedTimer)
+
+	putResponseWriter := serveHTTP(http.MethodPut, "/timers/7", bytes.NewBuffer(jsonValue))
+	assert.EqualValues(t, http.StatusNoContent, putResponseWriter.Code)
+
+	// 2. Get timer
+	getResponseWriter := serveHTTP(http.MethodGet, "/timers/7", nil)
+	assert.Equal(t, http.StatusOK, getResponseWriter.Code)
+
+	var result models.Timer
+	err := json.Unmarshal(getResponseWriter.Body.Bytes(), &result)
+	assert.Nil(t, err)
+	assert.Equal(t, updatedTimer, result)
+}
+
+func TestDeleteTimer(t *testing.T) {
+	deleteResponseWriter := serveHTTP(http.MethodDelete, "/timers/1", nil)
 	assert.Equal(t, http.StatusNoContent, deleteResponseWriter.Code)
 
-	getReq, _ := http.NewRequest(http.MethodGet, "/timers/1", nil)
-	getResponseWriter := httptest.NewRecorder()
-	router.ServeHTTP(getResponseWriter, getReq)
-
+	getResponseWriter := serveHTTP(http.MethodGet, "/timers/1", nil)
 	assert.EqualValues(t, http.StatusNotFound, getResponseWriter.Code)
+}
+
+func serveHTTP(httpMethod string, url string, body io.Reader) *httptest.ResponseRecorder {
+	req, _ := http.NewRequest(httpMethod, url, body)
+
+	switch httpMethod {
+	case http.MethodPut, http.MethodPost:
+		req.Header.Set("Content-Type", "application/json")
+	}
+
+	responseWriter := httptest.NewRecorder()
+	router.ServeHTTP(responseWriter, req)
+
+	return responseWriter
 }
