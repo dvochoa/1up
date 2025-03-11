@@ -80,6 +80,20 @@ func (store TimerStore) CreateTimer(ctx context.Context, timer *models.Timer) er
 	return err
 }
 
+// UpdateTimer replaces the timer keyed by id.
+// Throws an error when no matching timer is found
+func (store TimerStore) UpdateTimer(ctx context.Context, id int, timer *models.Timer) error {
+	queryCtx, cancel := getQueryCtx(ctx)
+	defer cancel()
+
+	_, err := store.conn.Exec(
+		queryCtx,
+		"INSERT INTO timers (id, title) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET title = $2 RETURNING id",
+		timer.Id, timer.Title,
+	)
+	return err
+}
+
 // DeleteTimer deletes the timer matching the specified int from the timers table
 func (store TimerStore) DeleteTimer(ctx context.Context, id int) error {
 	queryCtx, cancel := getQueryCtx(ctx)

@@ -60,13 +60,33 @@ func CreateTimer(c *gin.Context) {
 	c.JSON(http.StatusCreated, newTimer)
 }
 
+// UpdateTimer updates the data associated with a timer keyed by id
+func UpdateTimer(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var updatedTimer models.Timer
+
+	if err := c.BindJSON(&updatedTimer); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := TimerStore.UpdateTimer(c.Request.Context(), id, &updatedTimer)
+	if err != nil {
+		log.Printf("Error when updating timer %v with id=%d: %v", updatedTimer, id, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": fmt.Sprintf("Failed to update timer with id=%d", id)})
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
 func DeleteTimer(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	err := TimerStore.DeleteTimer(c.Request.Context(), id)
 
 	if err != nil {
-		log.Printf("Error when deleting timer: %v\n", err)
+		log.Printf("Error when deleting timer: %v", err)
 		msg := gin.H{"message": fmt.Sprintf("Failed to delete timer with id=%d", id)}
 
 		if errors.Is(err, pgx.ErrNoRows) {
