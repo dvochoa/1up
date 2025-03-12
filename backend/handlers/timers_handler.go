@@ -18,6 +18,7 @@ var TimerStore db.TimerStore
 // GetTimers returns all timers
 func GetTimers(c *gin.Context) {
 	timers, err := TimerStore.GetTimers(c.Request.Context())
+
 	if err != nil {
 		log.Printf("Error when calling TimerStore.GetTimers: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get timers"})

@@ -34,6 +34,7 @@ RUN adduser --system --uid 1001 nextjs
 # Copy the bundled code from the build stage to the production image
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
 # Set ownership and permission
 RUN chown -R nextjs:nodejs /app
