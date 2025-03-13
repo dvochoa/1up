@@ -5,10 +5,10 @@ import React, { useState, useEffect } from "react";
 export interface TimerProps {
   id: number;
   title: string;
-  backgroundColor: string;
+  totalTime: number;
 }
 
-export const Timer: React.FC<TimerProps> = ({ title, backgroundColor }) => {
+export const Timer: React.FC<TimerProps> = ({ title, totalTime }) => {
   const [time, setTime] = useState(0); // Time in milliseconds
   const [isRunning, setIsRunning] = useState(false);
 
@@ -29,36 +29,35 @@ export const Timer: React.FC<TimerProps> = ({ title, backgroundColor }) => {
     };
   }, [isRunning]);
 
-  const formatTime = () => {
+  const formatTime = (): string => {
     const milliseconds = (time % 1000) / 10;
     const seconds = Math.floor((time / 1000) % 60);
     const minutes = Math.floor((time / (1000 * 60)) % 60);
 
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${String(milliseconds).padStart(2, "0")}`;
   };
+
+  const toggleState = (): void => {
+    setIsRunning(!isRunning);
+  };
+
+  const getTimerColor = (): string => {
+    if (isRunning) {
+      return "bg-green-900";
+    } else if (time == 0) {
+      return "bg-zinc-400/40";
+    } else {
+      return "bg-red-900";
+    }
+  };
+
   return (
-    <div className={`m-2 rounded ${backgroundColor}`}>
-      <div className="m-2 py-1">
-        <h1 className="font-bold">{title}</h1>
+    <div className={`m-2 rounded ${getTimerColor()}`} onClick={toggleState}>
+      <div className="m-2 py-3 pl-1">
+        <span className="font-bold mr-2">{title}</span>
+        <span className="text-xs text-neutral-300">{totalTime}</span>
+
         <h1>{formatTime()}</h1>
-
-        <button
-          onClick={() => {
-            setIsRunning(!isRunning);
-          }}
-          className={`mr-1 ${isRunning ? "text-red-700" : "text-green-700"}`}
-        >
-          <p>{isRunning ? "Stop" : "Start"}</p>
-        </button>
-
-        <button
-          onClick={() => {
-            setIsRunning(false);
-            setTime(0);
-          }}
-        >
-          <p>Reset</p>
-        </button>
       </div>
     </div>
   );

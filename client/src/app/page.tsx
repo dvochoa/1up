@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import styles from "./page.module.css";
 import ThemeToggle from "@/components/theme-toggle";
 import { TimerProps } from "@/components/timer";
 import TimerList from "@/components/timer-list";
@@ -22,7 +23,7 @@ export default function HomePage() {
         const parsedTimers: TimerProps[] = await jsonResponse.timers.map((timer: BackendTimer) => ({
           id: timer.id,
           title: timer.title,
-          backgroundColor: "bg-orange-500/50",
+          totalTime: 1000,
         }));
         setTimers(parsedTimers);
       } catch (error) {
@@ -35,12 +36,12 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div>
+    <div className={`${styles["grid-container"]} h-lvh grid`}>
       <meta charSet="utf-8"></meta>
       <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
       <ThemeToggle />
 
-      <main>
+      <main className="row-start-2 col-start-2">
         <TimerList timers={timers}></TimerList>
       </main>
     </div>

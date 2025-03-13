@@ -6,14 +6,9 @@ interface TimerListProps {
 
 const TimerList: React.FC<TimerListProps> = ({ timers }) => {
   return (
-    <div className="m-10 rounded border-solid border-2 border-red-700">
+    <div>
       {timers.map((timer) => (
-        <Timer
-          title={timer.title}
-          id={timer.id}
-          key={timer.id}
-          backgroundColor={timer.backgroundColor}
-        ></Timer>
+        <Timer key={timer.id} id={timer.id} title={timer.title} totalTime={timer.totalTime}></Timer>
       ))}
     </div>
   );
