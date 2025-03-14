@@ -23,7 +23,7 @@ export default function HomePage() {
         const parsedTimers: TimerProps[] = await jsonResponse.timers.map((timer: BackendTimer) => ({
           id: timer.id,
           title: timer.title,
-          totalTime: 1000,
+          totalTime: 115843,
         }));
         setTimers(parsedTimers);
       } catch (error) {

@@ -5,21 +5,24 @@ import React, { useState, useEffect } from "react";
 export interface TimerProps {
   id: number;
   title: string;
-  totalTime: number;
+  totalTime: number; // in seconds
 }
 
+const SECONDS_IN_A_HOUR: number = 3600;
+const SECONDS_IN_A_MINUTE: number = 60;
+
 export const Timer: React.FC<TimerProps> = ({ title, totalTime }) => {
-  const [time, setTime] = useState(0); // Time in milliseconds
+  const [time, setTime] = useState(0); // Time in seconds
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined;
 
     if (isRunning) {
-      // Increment time by 10ms every 10ms
+      // Increment time by 1s every 1000ms
       interval = setInterval(() => {
-        setTime((prevTime) => prevTime + 10);
-      }, 10);
+        setTime((prevTime) => prevTime + 1);
+      }, 1000);
     } else if (!isRunning && interval) {
       clearInterval(interval);
     }
@@ -30,11 +33,18 @@ export const Timer: React.FC<TimerProps> = ({ title, totalTime }) => {
   }, [isRunning]);
 
   const formatTime = (): string => {
-    const milliseconds = (time % 1000) / 10;
-    const seconds = Math.floor((time / 1000) % 60);
-    const minutes = Math.floor((time / (1000 * 60)) % 60);
+    const seconds = Math.floor(time % 60);
+    const minutes = Math.floor((time / 60) % 60);
 
-    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${String(milliseconds).padStart(2, "0")}`;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  };
+
+  const formatTotalTime = (): string => {
+    const hours = Math.floor(totalTime / SECONDS_IN_A_HOUR);
+    const minutes = Math.floor((totalTime % SECONDS_IN_A_HOUR) / SECONDS_IN_A_MINUTE);
+    const seconds = Math.floor((totalTime % SECONDS_IN_A_HOUR) % SECONDS_IN_A_MINUTE);
+
+    return `${hours}h ${minutes}m ${seconds}s`;
   };
 
   const toggleState = (): void => {
@@ -55,7 +65,7 @@ export const Timer: React.FC<TimerProps> = ({ title, totalTime }) => {
     <div className={`m-2 rounded ${getTimerColor()}`} onClick={toggleState}>
       <div className="m-2 py-3 pl-1">
         <span className="font-bold mr-2">{title}</span>
-        <span className="text-xs text-neutral-300">{totalTime}</span>
+        <span className="text-xs text-neutral-300">{formatTotalTime()}</span>
 
         <h1>{formatTime()}</h1>
       </div>
