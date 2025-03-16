@@ -13,6 +13,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+// Blaj blajb lah
 var TimerStore db.TimerStore
 
 // GetTimers returns all timers
