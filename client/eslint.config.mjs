@@ -19,7 +19,6 @@ export default [
     "plugin:@next/next/recommended",
     "prettier",
     "plugin:prettier/recommended",
-    "plugin:tailwindcss/recommended",
   ),
   {
     languageOptions: {
@@ -28,8 +27,6 @@ export default [
       sourceType: "module",
     },
 
-    rules: {
-      "tailwindcss/classnames-order": "off",
-    },
+    rules: {},
   },
 ];

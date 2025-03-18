@@ -63,7 +63,7 @@ export const Timer: React.FC<TimerProps> = ({ title, totalTime }) => {
 
   return (
     <div
-      className={`my-5 rounded shadow-md dark:shadow-none ${getTimerColor()}`}
+      className={`my-5 rounded-sm shadow-md dark:shadow-none ${getTimerColor()}`}
       onClick={toggleState}
     >
       <div className="m-2 py-3 pl-1">
