@@ -36,12 +36,12 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className={`${styles["grid-container"]} h-lvh grid`}>
+    <div className={`${styles["grid-container"]} grid h-lvh`}>
       <meta charSet="utf-8"></meta>
       <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
       <ThemeToggle />
 
-      <main className="row-start-2 col-start-2">
+      <main className="col-start-2 row-start-2">
         <TimerList timers={timers}></TimerList>
       </main>
     </div>
