@@ -67,7 +67,7 @@ export const Timer: React.FC<TimerProps> = ({ title, totalTime }) => {
       onClick={toggleState}
     >
       <div className="m-2 py-3 pl-1">
-        <span className="text-xl font-bold mr-3">{title}</span>
+        <span className="mr-3 text-xl font-bold">{title}</span>
         <span className="text-sm font-bold text-neutral-800 dark:text-neutral-300">
           {formatTotalTime()}
         </span>
