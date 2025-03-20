@@ -17,7 +17,13 @@ var TimerStore db.TimerStore
 
 // GetTimers returns all timers
 func GetTimers(c *gin.Context) {
-	timers, err := TimerStore.GetTimers(c.Request.Context())
+	userId, err := strconv.ParseInt(c.Param("userId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid userId"})
+		return
+	}
+
+	timers, err := TimerStore.GetTimers(c.Request.Context(), userId)
 
 	if err != nil {
 		log.Printf("Error when calling TimerStore.GetTimers: %v", err)

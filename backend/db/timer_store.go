@@ -43,16 +43,19 @@ func (store TimerStore) CloseConnection(ctx context.Context) {
 	}
 }
 
+// TODO: Update, should take in a user id
 // GetTimers returns all timers
-func (store TimerStore) GetTimers(ctx context.Context) ([]models.Timer, error) {
+func (store TimerStore) GetTimers(ctx context.Context, user_id int64) ([]models.Timer, error) {
 	queryCtx, cancel := getQueryCtx(ctx)
 	defer cancel()
 
+	// Query TimerSettings and join with TimerProgress sum to get totalTime
 	rows, _ := store.conn.Query(queryCtx, "SELECT * FROM timers")
 	timers, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Timer])
 	return timers, err
 }
 
+// TODO: Update this to return TimerSessions
 // GetTimerById returns the timer with matching id, if any
 func (store TimerStore) GetTimerById(ctx context.Context, id int) (models.Timer, error) {
 	queryCtx, cancel := getQueryCtx(ctx)
@@ -67,6 +70,7 @@ func (store TimerStore) GetTimerById(ctx context.Context, id int) (models.Timer,
 	return timer, err
 }
 
+// TODO: Update
 // CreateTimer inserts a new timer into the timers table
 func (store TimerStore) CreateTimer(ctx context.Context, timer *models.Timer) error {
 	queryCtx, cancel := getQueryCtx(ctx)
@@ -80,6 +84,7 @@ func (store TimerStore) CreateTimer(ctx context.Context, timer *models.Timer) er
 	return err
 }
 
+// TODO: Update this to refer to TimerSettings
 // UpdateTimer replaces the timer keyed by id.
 // Throws an error when no matching timer is found
 func (store TimerStore) UpdateTimer(ctx context.Context, id int, timer *models.Timer) error {
@@ -94,6 +99,7 @@ func (store TimerStore) UpdateTimer(ctx context.Context, id int, timer *models.T
 	return err
 }
 
+// TODO: Update this to refer to TimerSettings, need to delete from both tables
 // DeleteTimer deletes the timer matching the specified int from the timers table
 func (store TimerStore) DeleteTimer(ctx context.Context, id int) error {
 	queryCtx, cancel := getQueryCtx(ctx)
