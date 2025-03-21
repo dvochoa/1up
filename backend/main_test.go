@@ -45,7 +45,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestGetTimers(t *testing.T) {
-	responseWriter := serveHTTP(http.MethodGet, "/timers", nil)
+	responseWriter := serveHTTP(http.MethodGet, "/users/1/timers", nil)
 	assert.Equal(t, http.StatusOK, responseWriter.Code)
 
 	var result models.GetTimersResponse
@@ -53,10 +53,10 @@ func TestGetTimers(t *testing.T) {
 	assert.Nil(t, err)
 
 	timers := result.Timers
-	assert.Equal(t, models.Timer{Id: 1, Title: "Coding"}, timers[0])
-	assert.Equal(t, models.Timer{Id: 2, Title: "Music Production"}, timers[1])
-	assert.Equal(t, models.Timer{Id: 3, Title: "DJing"}, timers[2])
-	assert.Equal(t, models.Timer{Id: 4, Title: "Piano"}, timers[3])
+	assert.Equal(t, models.Timer{Id: 1, Title: "Coding", TotalTime: 5400}, timers[0])
+	assert.Equal(t, models.Timer{Id: 2, Title: "Music Production", TotalTime: 2700}, timers[1])
+	assert.Equal(t, models.Timer{Id: 3, Title: "DJing", TotalTime: 600}, timers[2])
+	assert.Equal(t, models.Timer{Id: 4, Title: "Piano", TotalTime: 0}, timers[3])
 }
 
 func TestGetTimerById(t *testing.T) {

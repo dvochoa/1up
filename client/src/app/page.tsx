@@ -12,9 +12,13 @@ interface BackendTimer {
   title: string;
 }
 
+// TODO: Should this be async?
 export default function HomePage() {
   const [timers, setTimers] = useState<TimerProps[]>([]);
 
+  // TODO: Move this into a file that handles interfacing with the backend
+  // TODO: Look into how t3 did its fetch, looks simpler?
+  // https://github.com/t3dotgg/t3gallery/blob/main/src/app/page.tsx
   useEffect(() => {
     const fetchData = async () => {
       try {

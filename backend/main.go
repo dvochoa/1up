@@ -34,7 +34,7 @@ func main() {
 func GetRouter() *gin.Engine {
 	router := gin.Default()
 
-	router.GET("/timers", handlers.GetTimers)
+	router.GET("/users/:id/timers", handlers.GetTimers)
 	router.GET("/timers/:id", handlers.GetTimerById)
 	router.POST("/timers", handlers.CreateTimer)
 	router.PUT("/timers/:id", handlers.UpdateTimer)
