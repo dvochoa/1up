@@ -9,7 +9,7 @@ type Timer struct {
 type TimerSession struct {
 	Id              int64 `json:"id"`
 	Timestamp       int64 `json:"timestamp"`
-	SessionDuration int32 `json:"sessionDuraton"`
+	SessionDuration int32 `json:"sessionDuration"`
 }
 
 type GetTimersResponse struct {

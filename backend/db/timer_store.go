@@ -43,14 +43,21 @@ func (store TimerStore) CloseConnection(ctx context.Context) {
 	}
 }
 
-// TODO: Update, should take in a user id
 // GetTimers returns all timers
 func (store TimerStore) GetTimers(ctx context.Context, user_id int64) ([]models.Timer, error) {
 	queryCtx, cancel := getQueryCtx(ctx)
 	defer cancel()
 
-	// Query TimerSettings and join with TimerProgress sum to get totalTime
-	rows, _ := store.conn.Query(queryCtx, "SELECT * FROM timers")
+	rows, _ := store.conn.Query(
+		queryCtx,
+		`SELECT ts.id as id, ts.title as title, COALESCE(SUM(tp.session_duration_in_seconds), 0) as totalTime
+		 FROM (
+		 	SELECT id, title FROM timersettings WHERE owner_id = $1
+		 ) ts
+		 LEFT JOIN timerprogress tp ON tp.timer_setting_id = ts.id
+		 GROUP BY ts.id, ts.title;`,
+		user_id,
+	)
 	timers, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Timer])
 	return timers, err
 }
