@@ -43,6 +43,8 @@ func (store TimerStore) CloseConnection(ctx context.Context) {
 	}
 }
 
+// TODO: Refactor querying implementation by integrating with an ORM
+
 // GetTimers returns all timers
 func (store TimerStore) GetTimers(ctx context.Context, user_id int64) ([]models.Timer, error) {
 	queryCtx, cancel := getQueryCtx(ctx)
@@ -50,12 +52,12 @@ func (store TimerStore) GetTimers(ctx context.Context, user_id int64) ([]models.
 
 	rows, _ := store.conn.Query(
 		queryCtx,
-		`SELECT ts.id as id, ts.title as title, COALESCE(SUM(tp.session_duration_in_seconds), 0) as totalTime
+		`SELECT ts.id as id, ts.owner_id as ownerId, ts.title as title, COALESCE(SUM(tp.session_duration_in_seconds), 0) as totalTime
 		 FROM (
-		 	SELECT id, title FROM timersettings WHERE owner_id = $1
+		 	SELECT id, owner_id, title FROM timersettings WHERE owner_id = $1
 		 ) ts
 		 LEFT JOIN timerprogress tp ON tp.timer_setting_id = ts.id
-		 GROUP BY ts.id, ts.title;`,
+		 GROUP BY ts.id, ts.owner_id, ts.title;`,
 		user_id,
 	)
 	timers, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Timer])
@@ -77,42 +79,42 @@ func (store TimerStore) GetTimerById(ctx context.Context, id int) (models.Timer,
 	return timer, err
 }
 
-// TODO: Update
-// CreateTimer inserts a new timer into the timers table
-func (store TimerStore) CreateTimer(ctx context.Context, timer *models.Timer) error {
+// CreateTimerSetting inserts a new timer into the timerSettings table
+func (store TimerStore) CreateTimerSetting(ctx context.Context, timer *models.Timer) error {
 	queryCtx, cancel := getQueryCtx(ctx)
 	defer cancel()
 
 	err := store.conn.QueryRow(
 		queryCtx,
-		"INSERT INTO timers (title) VALUES ($1) RETURNING id",
-		timer.Title,
+		"INSERT INTO timerSettings (owner_id, title) VALUES ($1, $2) RETURNING id",
+		timer.OwnerId, timer.Title,
 	).Scan(&timer.Id)
 	return err
 }
 
-// TODO: Update this to refer to TimerSettings
 // UpdateTimer replaces the timer keyed by id.
 // Throws an error when no matching timer is found
-func (store TimerStore) UpdateTimer(ctx context.Context, id int, timer *models.Timer) error {
+func (store TimerStore) UpdateTimerSettings(ctx context.Context, timer *models.Timer) error {
 	queryCtx, cancel := getQueryCtx(ctx)
 	defer cancel()
 
 	_, err := store.conn.Exec(
 		queryCtx,
-		"INSERT INTO timers (id, title) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET title = $2 RETURNING id",
-		timer.Id, timer.Title,
+		`INSERT INTO timerSettings (id, owner_id, title)
+		 VALUES ($1, $2, $3)
+		 ON CONFLICT (id) DO UPDATE SET owner_id = $2 title = $3`,
+		timer.Id, timer.OwnerId, timer.Title,
 	)
 	return err
 }
 
-// TODO: Update this to refer to TimerSettings, need to delete from both tables
-// DeleteTimer deletes the timer matching the specified int from the timers table
-func (store TimerStore) DeleteTimer(ctx context.Context, id int) error {
+// DeleteTimerSettings deletes the timer keyed by the specified id from the timers table
+// Deletes cascade down to child tables.
+func (store TimerStore) DeleteTimerSettings(ctx context.Context, id int) error {
 	queryCtx, cancel := getQueryCtx(ctx)
 	defer cancel()
 
-	commandTag, err := store.conn.Exec(queryCtx, "DELETE FROM timers WHERE id=$1", id)
+	commandTag, err := store.conn.Exec(queryCtx, "DELETE FROM timerSettings WHERE id=$1", id)
 
 	if err != nil {
 		return err

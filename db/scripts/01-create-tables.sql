@@ -7,13 +7,13 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS timerSettings (
   id                        BIGSERIAL PRIMARY KEY,
-  owner_id                  BIGINT REFERENCES users(id), -- TODO: Should this be set as NOT NULL?
+  owner_id                  BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   title                     VARCHAR(128) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS timerProgress (
   id                          BIGSERIAL PRIMARY KEY,
-  timer_setting_id            BIGINT REFERENCES timerSettings(id), -- TODO: Same here, showing up as that in pgAdmin
+  timer_setting_id            BIGINT NOT NULL REFERENCES timerSettings(id) ON DELETE CASCADE,
   session_duration_in_seconds INTEGER NOT NULL,
   session_timestamp           TIMESTAMPTZ NOT NULL
 );

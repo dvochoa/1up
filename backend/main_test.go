@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -33,7 +34,10 @@ func TestMain(m *testing.M) {
 	defer test_db.StopTestDatabase()
 
 	connStr, _ := test_db.GetTestDatabaseConnection(ctx)
-	timerStore, _ := db.NewTimerStore(ctx, connStr)
+	timerStore, err := db.NewTimerStore(ctx, connStr)
+	if err != nil {
+		fmt.Println(err)
+	}
 	defer timerStore.CloseConnection(ctx)
 	handlers.TimerStore = *timerStore
 
@@ -53,12 +57,13 @@ func TestGetTimers(t *testing.T) {
 	assert.Nil(t, err)
 
 	timers := result.Timers
-	assert.Equal(t, models.Timer{Id: 1, Title: "Coding", TotalTime: 5400}, timers[0])
-	assert.Equal(t, models.Timer{Id: 2, Title: "Music Production", TotalTime: 2700}, timers[1])
-	assert.Equal(t, models.Timer{Id: 3, Title: "DJing", TotalTime: 600}, timers[2])
-	assert.Equal(t, models.Timer{Id: 4, Title: "Piano", TotalTime: 0}, timers[3])
+	assert.Equal(t, models.Timer{Id: 1, OwnerId: 1, Title: "Coding", TotalTime: 5400}, timers[0])
+	assert.Equal(t, models.Timer{Id: 2, OwnerId: 1, Title: "Music Production", TotalTime: 2700}, timers[1])
+	assert.Equal(t, models.Timer{Id: 3, OwnerId: 1, Title: "DJing", TotalTime: 600}, timers[2])
+	assert.Equal(t, models.Timer{Id: 4, OwnerId: 1, Title: "Piano", TotalTime: 0}, timers[3])
 }
 
+// TODO: Update these tests
 func TestGetTimerById(t *testing.T) {
 	responseWriter := serveHTTP(http.MethodGet, "/timers/1", nil)
 	assert.Equal(t, http.StatusOK, responseWriter.Code)
@@ -69,6 +74,9 @@ func TestGetTimerById(t *testing.T) {
 	assert.Equal(t, models.Timer{Id: 1, Title: "Coding"}, result)
 }
 
+// TODO: Update this test
+// TODO: When calling createTimer the frontend won't be able to supply the id, any way to make the model have id nullable?
+// Or should I create a different interface?
 func TestCreateTimer(t *testing.T) {
 	// 1. No timer with Id=5 is found
 	getResponseWriter := serveHTTP(http.MethodGet, "/timers/5", nil)
@@ -95,6 +103,7 @@ func TestCreateTimer(t *testing.T) {
 	assert.Equal(t, newTimer, result)
 }
 
+// TODO: Update this test
 func TestUpdateTimer_ExistingTimer(t *testing.T) {
 	// 1. Update timer
 	updatedTimer := models.Timer{Id: 1, Title: "Dancing"}
@@ -113,6 +122,7 @@ func TestUpdateTimer_ExistingTimer(t *testing.T) {
 	assert.Equal(t, updatedTimer, result)
 }
 
+// TODO: Update this test
 func TestUpdateTimer_NewTimer(t *testing.T) {
 	// 1. Update timer
 	updatedTimer := models.Timer{Id: 7, Title: "Dancing"}
@@ -131,6 +141,7 @@ func TestUpdateTimer_NewTimer(t *testing.T) {
 	assert.Equal(t, updatedTimer, result)
 }
 
+// TODO: Update this test
 func TestDeleteTimer(t *testing.T) {
 	deleteResponseWriter := serveHTTP(http.MethodDelete, "/timers/1", nil)
 	assert.Equal(t, http.StatusNoContent, deleteResponseWriter.Code)

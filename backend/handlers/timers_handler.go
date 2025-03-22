@@ -35,8 +35,9 @@ func GetTimers(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// TODO: Rename this to GetTimerDetails and implement it to return the new model
 // GetTimerById returns the timer with matching id, if any
-func GetTimerById(c *gin.Context) {
+func GetTimerDetails(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	timer, err := TimerStore.GetTimerById(c.Request.Context(), id)
@@ -57,7 +58,7 @@ func CreateTimer(c *gin.Context) {
 		return
 	}
 
-	err := TimerStore.CreateTimer(c.Request.Context(), &newTimer)
+	err := TimerStore.CreateTimerSetting(c.Request.Context(), &newTimer)
 	if err != nil {
 		log.Printf("Error when creating timer %v: %v", newTimer, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create timer"})
@@ -67,9 +68,8 @@ func CreateTimer(c *gin.Context) {
 	c.JSON(http.StatusCreated, newTimer)
 }
 
-// UpdateTimer updates the data associated with a timer keyed by id
-func UpdateTimer(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+// UpdateTimer updates the data associated with the timer keyed by id
+func UpdateTimerSettings(c *gin.Context) {
 	var updatedTimer models.Timer
 
 	if err := c.BindJSON(&updatedTimer); err != nil {
@@ -77,23 +77,24 @@ func UpdateTimer(c *gin.Context) {
 		return
 	}
 
-	err := TimerStore.UpdateTimer(c.Request.Context(), id, &updatedTimer)
+	err := TimerStore.UpdateTimerSettings(c.Request.Context(), &updatedTimer)
 	if err != nil {
-		log.Printf("Error when updating timer %v with id=%d: %v", updatedTimer, id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"message": fmt.Sprintf("Failed to update timer with id=%d", id)})
+		log.Printf("Error when updating timer %v: %v", updatedTimer, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": fmt.Sprintf("Failed to update timer with id=%d", updatedTimer.Id)})
 		return
 	}
 
 	c.Status(http.StatusNoContent)
 }
 
+// DeleteTimer deletes all data associated with the timer keyed by id
 func DeleteTimer(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
-	err := TimerStore.DeleteTimer(c.Request.Context(), id)
+	err := TimerStore.DeleteTimerSettings(c.Request.Context(), id)
 
 	if err != nil {
-		log.Printf("Error when deleting timer: %v", err)
+		log.Printf("Error when deleting timer with id=%d: %v", id, err)
 		msg := gin.H{"message": fmt.Sprintf("Failed to delete timer with id=%d", id)}
 
 		if errors.Is(err, pgx.ErrNoRows) {
