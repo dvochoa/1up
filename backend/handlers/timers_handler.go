@@ -24,7 +24,6 @@ func GetTimers(c *gin.Context) {
 	}
 
 	timers, err := TimerStore.GetTimers(c.Request.Context(), userId)
-
 	if err != nil {
 		log.Printf("Error when calling TimerStore.GetTimers: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get timers"})
@@ -35,18 +34,23 @@ func GetTimers(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// TODO: Rename this to GetTimerDetails and implement it to return the new model
-// GetTimerById returns the timer with matching id, if any
-func GetTimerDetails(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-
-	timer, err := TimerStore.GetTimerById(c.Request.Context(), id)
+// GetTimeHistory returns the history of the timer with matching id, if any
+func GetTimerHistory(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Timer with id=%d not found", id)})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid timerId"})
 		return
 	}
 
-	c.JSON(http.StatusOK, timer)
+	timerSessions, err := TimerStore.GetTimerProgress(c.Request.Context(), id)
+	if err != nil {
+		log.Printf("Error when calling TimerStore.GetTimerProgress: %v", err)
+		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Failed to get history for timer with id=%d", id)})
+		return
+	}
+
+	response := models.GetTimerHistoryResponse{TimerSessions: timerSessions}
+	c.JSON(http.StatusOK, response)
 }
 
 // CreateTimer inserts a new timer in the db

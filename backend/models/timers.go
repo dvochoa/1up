@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Timer struct {
 	Id        int64  `json:"id"`
 	OwnerId   int64  `json:"ownerId"`
@@ -8,9 +10,9 @@ type Timer struct {
 }
 
 type TimerSession struct {
-	Id              int64 `json:"id"`
-	Timestamp       int64 `json:"timestamp"`
-	SessionDuration int32 `json:"sessionDuration"`
+	Id                       int64     `json:"id"`
+	SessionTimestamp         time.Time `json:"sessionTimestamp"`
+	SessionDurationInSeconds int32     `json:"sessionDurationInSeconds"`
 }
 
 type GetTimersResponse struct {

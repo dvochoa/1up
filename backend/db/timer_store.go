@@ -46,7 +46,7 @@ func (store TimerStore) CloseConnection(ctx context.Context) {
 // TODO: Refactor querying implementation by integrating with an ORM
 
 // GetTimers returns all timers
-func (store TimerStore) GetTimers(ctx context.Context, user_id int64) ([]models.Timer, error) {
+func (store TimerStore) GetTimers(ctx context.Context, userId int64) ([]models.Timer, error) {
 	queryCtx, cancel := getQueryCtx(ctx)
 	defer cancel()
 
@@ -58,25 +58,24 @@ func (store TimerStore) GetTimers(ctx context.Context, user_id int64) ([]models.
 		 ) ts
 		 LEFT JOIN timerprogress tp ON tp.timer_setting_id = ts.id
 		 GROUP BY ts.id, ts.owner_id, ts.title;`,
-		user_id,
+		userId,
 	)
 	timers, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Timer])
 	return timers, err
 }
 
-// TODO: Update this to return TimerSessions
-// GetTimerById returns the timer with matching id, if any
-func (store TimerStore) GetTimerById(ctx context.Context, id int) (models.Timer, error) {
+// GetTimerProgress returns the timer with matching id, if any
+func (store TimerStore) GetTimerProgress(ctx context.Context, timerSettingId int) ([]models.TimerSession, error) {
 	queryCtx, cancel := getQueryCtx(ctx)
 	defer cancel()
 
-	var timer models.Timer
-	err := store.conn.QueryRow(
+	rows, _ := store.conn.Query(
 		queryCtx,
-		"SELECT id, title FROM timers WHERE id = $1",
-		id,
-	).Scan(&timer.Id, &timer.Title)
-	return timer, err
+		"SELECT id, session_duration_in_seconds, session_timestamp FROM timerProgress WHERE timer_setting_id = $1",
+		timerSettingId,
+	)
+	timerSessions, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.TimerSession])
+	return timerSessions, err
 }
 
 // CreateTimerSetting inserts a new timer into the timerSettings table

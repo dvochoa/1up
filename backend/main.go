@@ -41,7 +41,7 @@ func GetRouter() *gin.Engine {
 	// Need to get it passed via some request context, should save that for a follow up change and use some
 	// hard-coded fake data for now.
 	router.GET("/users/:id/timers", handlers.GetTimers)
-	router.GET("/timers/:id", handlers.GetTimerDetails)
+	router.GET("/timers/:id", handlers.GetTimerHistory)
 	router.POST("/timers", handlers.CreateTimer)
 	router.PUT("/timers/:id", handlers.UpdateTimerSettings)
 	router.DELETE("/timers/:id", handlers.DeleteTimer)

@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/dvochoa/1up/db"
 	"github.com/dvochoa/1up/handlers"
@@ -63,15 +64,22 @@ func TestGetTimers(t *testing.T) {
 	assert.Equal(t, models.Timer{Id: 4, OwnerId: 1, Title: "Piano", TotalTime: 0}, timers[3])
 }
 
-// TODO: Update these tests
-func TestGetTimerById(t *testing.T) {
+func TestGetTimerHistory(t *testing.T) {
 	responseWriter := serveHTTP(http.MethodGet, "/timers/1", nil)
 	assert.Equal(t, http.StatusOK, responseWriter.Code)
 
-	var result models.Timer
+	var result models.GetTimerHistoryResponse
 	err := json.Unmarshal(responseWriter.Body.Bytes(), &result)
 	assert.Nil(t, err)
-	assert.Equal(t, models.Timer{Id: 1, Title: "Coding"}, result)
+
+	timerSessions := result.TimerSessions
+
+	// Convert timestamps to UTC so that timestamp value is constant no matter the timezone this test is ran in
+	for i := range timerSessions {
+		timerSessions[i].SessionTimestamp = timerSessions[i].SessionTimestamp.UTC()
+	}
+	assert.Equal(t, models.TimerSession{Id: 1, SessionTimestamp: time.Date(2025, 3, 15, 12, 0, 0, 0, time.UTC), SessionDurationInSeconds: 3600}, timerSessions[0])
+	assert.Equal(t, models.TimerSession{Id: 2, SessionTimestamp: time.Date(2025, 3, 20, 10, 0, 0, 0, time.UTC), SessionDurationInSeconds: 1800}, timerSessions[1])
 }
 
 // TODO: Update this test
