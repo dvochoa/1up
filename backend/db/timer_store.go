@@ -16,6 +16,9 @@ type TimerStore struct {
 	conn *pgx.Conn
 }
 
+// TODO: Need to enforce authz whereby users are only able query their own timers
+// TODO: Refactor querying implementation by integrating with an ORM
+
 // NewTimerStore creates an instance of a TimerStore
 func NewTimerStore(ctx context.Context, connStr string) (*TimerStore, error) {
 	conn, err := pgx.Connect(ctx, connStr)
@@ -42,8 +45,6 @@ func (store TimerStore) CloseConnection(ctx context.Context) {
 		}
 	}
 }
-
-// TODO: Refactor querying implementation by integrating with an ORM
 
 // GetTimers returns all timers
 func (store TimerStore) GetTimers(ctx context.Context, userId int64) ([]models.Timer, error) {
@@ -99,10 +100,8 @@ func (store TimerStore) UpdateTimerSettings(ctx context.Context, timer *models.T
 
 	_, err := store.conn.Exec(
 		queryCtx,
-		`INSERT INTO timerSettings (id, owner_id, title)
-		 VALUES ($1, $2, $3)
-		 ON CONFLICT (id) DO UPDATE SET owner_id = $2 title = $3`,
-		timer.Id, timer.OwnerId, timer.Title,
+		"UPDATE timerSettings SET title = $2 WHERE id = $1",
+		timer.Id, timer.Title,
 	)
 	return err
 }

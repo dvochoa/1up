@@ -58,6 +58,7 @@ func TestGetTimers(t *testing.T) {
 	assert.Nil(t, err)
 
 	timers := result.Timers
+	assert.Equal(t, 5, len(timers))
 	assert.Equal(t, models.Timer{Id: 1, OwnerId: 1, Title: "Coding", TotalTime: 5400}, timers[0])
 	assert.Equal(t, models.Timer{Id: 2, OwnerId: 1, Title: "Music Production", TotalTime: 2700}, timers[1])
 	assert.Equal(t, models.Timer{Id: 3, OwnerId: 1, Title: "DJing", TotalTime: 600}, timers[2])
@@ -82,80 +83,74 @@ func TestGetTimerHistory(t *testing.T) {
 	assert.Equal(t, models.TimerSession{Id: 2, SessionTimestamp: time.Date(2025, 3, 20, 10, 0, 0, 0, time.UTC), SessionDurationInSeconds: 1800}, timerSessions[1])
 }
 
-// TODO: Update this test
 // TODO: When calling createTimer the frontend won't be able to supply the id, any way to make the model have id nullable?
 // Or should I create a different interface?
 func TestCreateTimer(t *testing.T) {
-	// 1. No timer with Id=5 is found
-	getResponseWriter := serveHTTP(http.MethodGet, "/timers/5", nil)
-	assert.EqualValues(t, http.StatusNotFound, getResponseWriter.Code)
+	// 1. No timer with Id=6 is found
+	getResponseWriter := serveHTTP(http.MethodGet, "/users/2/timers", nil)
+	assert.EqualValues(t, http.StatusOK, getResponseWriter.Code)
+
+	var getTimersResult models.GetTimersResponse
+	err := json.Unmarshal(getResponseWriter.Body.Bytes(), &getTimersResult)
+	assert.Nil(t, err)
+	assert.Equal(t, 1, len(getTimersResult.Timers))
+	assert.Equal(t, int64(5), getTimersResult.Timers[0].Id)
 
 	// 2. Create a timer
-	newTimer := models.Timer{Id: 5, Title: "Cooking"}
+	newTimer := models.Timer{Id: 6, OwnerId: 2, Title: "Cooking"}
 	jsonValue, _ := json.Marshal(newTimer)
 
 	postResponseWriter := serveHTTP(http.MethodPost, "/timers", bytes.NewBuffer(jsonValue))
 	assert.EqualValues(t, http.StatusCreated, postResponseWriter.Code)
 
 	var result models.Timer
-	err := json.Unmarshal(postResponseWriter.Body.Bytes(), &result)
-	assert.Nil(t, err)
-	assert.Equal(t, models.Timer{Id: 5, Title: "Cooking"}, result)
-
-	// 3. Timer with Id=5 is found
-	getByIdResponseWriter := serveHTTP(http.MethodGet, "/timers/5", nil)
-	assert.EqualValues(t, http.StatusOK, getByIdResponseWriter.Code)
-
-	err = json.Unmarshal(getByIdResponseWriter.Body.Bytes(), &result)
+	err = json.Unmarshal(postResponseWriter.Body.Bytes(), &result)
 	assert.Nil(t, err)
 	assert.Equal(t, newTimer, result)
+
+	// 3. Timer with Id=6 is found
+	getResponseWriter = serveHTTP(http.MethodGet, "/users/2/timers", nil)
+	assert.EqualValues(t, http.StatusOK, getResponseWriter.Code)
+
+	err = json.Unmarshal(getResponseWriter.Body.Bytes(), &getTimersResult)
+	assert.Nil(t, err)
+	assert.Equal(t, 2, len(getTimersResult.Timers))
+	assert.Equal(t, newTimer, getTimersResult.Timers[1])
 }
 
-// TODO: Update this test
-func TestUpdateTimer_ExistingTimer(t *testing.T) {
+func TestUpdateTimerSettings(t *testing.T) {
 	// 1. Update timer
-	updatedTimer := models.Timer{Id: 1, Title: "Dancing"}
+	updatedTimer := models.Timer{Id: 1, OwnerId: 1, Title: "Dancing"}
 	jsonValue, _ := json.Marshal(updatedTimer)
 
 	putResponseWriter := serveHTTP(http.MethodPut, "/timers/1", bytes.NewBuffer(jsonValue))
 	assert.EqualValues(t, http.StatusNoContent, putResponseWriter.Code)
 
-	// 2. Get timer
-	getResponseWriter := serveHTTP(http.MethodGet, "/timers/1", nil)
-	assert.Equal(t, http.StatusOK, getResponseWriter.Code)
+	// 2. Get timers
+	getResponseWriter := serveHTTP(http.MethodGet, "/users/1/timers", nil)
+	assert.EqualValues(t, http.StatusOK, getResponseWriter.Code)
 
-	var result models.Timer
-	err := json.Unmarshal(getResponseWriter.Body.Bytes(), &result)
+	var getTimersResult models.GetTimersResponse
+	err := json.Unmarshal(getResponseWriter.Body.Bytes(), &getTimersResult)
 	assert.Nil(t, err)
-	assert.Equal(t, updatedTimer, result)
+	assert.Equal(t, 4, len(getTimersResult.Timers))
+	assert.Equal(t, models.Timer{Id: 1, OwnerId: 1, Title: "Dancing", TotalTime: 5400}, getTimersResult.Timers[0])
 }
 
-// TODO: Update this test
-func TestUpdateTimer_NewTimer(t *testing.T) {
-	// 1. Update timer
-	updatedTimer := models.Timer{Id: 7, Title: "Dancing"}
-	jsonValue, _ := json.Marshal(updatedTimer)
-
-	putResponseWriter := serveHTTP(http.MethodPut, "/timers/7", bytes.NewBuffer(jsonValue))
-	assert.EqualValues(t, http.StatusNoContent, putResponseWriter.Code)
-
-	// 2. Get timer
-	getResponseWriter := serveHTTP(http.MethodGet, "/timers/7", nil)
-	assert.Equal(t, http.StatusOK, getResponseWriter.Code)
-
-	var result models.Timer
-	err := json.Unmarshal(getResponseWriter.Body.Bytes(), &result)
-	assert.Nil(t, err)
-	assert.Equal(t, updatedTimer, result)
-}
-
-// TODO: Update this test
 func TestDeleteTimer(t *testing.T) {
 	deleteResponseWriter := serveHTTP(http.MethodDelete, "/timers/1", nil)
 	assert.Equal(t, http.StatusNoContent, deleteResponseWriter.Code)
 
-	getResponseWriter := serveHTTP(http.MethodGet, "/timers/1", nil)
-	assert.EqualValues(t, http.StatusNotFound, getResponseWriter.Code)
+	getResponseWriter := serveHTTP(http.MethodGet, "/users/1/timers", nil)
+	assert.EqualValues(t, http.StatusOK, getResponseWriter.Code)
+
+	var getTimersResult models.GetTimersResponse
+	err := json.Unmarshal(getResponseWriter.Body.Bytes(), &getTimersResult)
+	assert.Nil(t, err)
+
+	for _, timer := range getTimersResult.Timers {
+		assert.NotEqual(t, 1, timer.Id)
+	}
 }
 
 func serveHTTP(httpMethod string, url string, body io.Reader) *httptest.ResponseRecorder {

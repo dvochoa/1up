@@ -34,7 +34,7 @@ func GetTimers(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// GetTimeHistory returns the history of the timer with matching id, if any
+// GetTimerHistory returns the history of the timer with matching id, if any
 func GetTimerHistory(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
