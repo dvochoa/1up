@@ -16,9 +16,6 @@ type TimerStore struct {
 	conn *pgx.Conn
 }
 
-// TODO: Need to enforce authz whereby users are only able query their own timers
-// TODO: Refactor querying implementation by integrating with an ORM
-
 // NewTimerStore creates an instance of a TimerStore
 func NewTimerStore(ctx context.Context, connStr string) (*TimerStore, error) {
 	conn, err := pgx.Connect(ctx, connStr)

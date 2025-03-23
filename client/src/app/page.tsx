@@ -10,24 +10,21 @@ import TimerList from "@/components/timer-list";
 interface BackendTimer {
   id: number;
   title: string;
+  totalTime: number;
 }
 
-// TODO: Should this be async?
 export default function HomePage() {
   const [timers, setTimers] = useState<TimerProps[]>([]);
 
-  // TODO: Move this into a file that handles interfacing with the backend
-  // TODO: Look into how t3 did its fetch, looks simpler?
-  // https://github.com/t3dotgg/t3gallery/blob/main/src/app/page.tsx
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/timers");
+        const response = await fetch("/api/users/1/timers");
         const jsonResponse = await response.json();
         const parsedTimers: TimerProps[] = await jsonResponse.timers.map((timer: BackendTimer) => ({
           id: timer.id,
           title: timer.title,
-          totalTime: 115843,
+          totalTime: timer.totalTime,
         }));
         setTimers(parsedTimers);
       } catch (error) {

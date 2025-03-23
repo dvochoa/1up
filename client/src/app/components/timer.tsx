@@ -39,6 +39,7 @@ export const Timer: React.FC<TimerProps> = ({ title, totalTime }) => {
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   };
 
+  // TODO: Should hide hours, minutes, seconds if they are 0
   const formatTotalTime = (): string => {
     const hours = Math.floor(totalTime / SECONDS_IN_A_HOUR);
     const minutes = Math.floor((totalTime % SECONDS_IN_A_HOUR) / SECONDS_IN_A_MINUTE);

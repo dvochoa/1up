@@ -34,12 +34,6 @@ func main() {
 func GetRouter() *gin.Engine {
 	router := gin.Default()
 
-	// Going to need the id of the requesting user for:
-	// 1. Know how to set owner_id in CreateTimer
-	// 2. Checking permissions for all
-
-	// Need to get it passed via some request context, should save that for a follow up change and use some
-	// hard-coded fake data for now.
 	router.GET("/users/:id/timers", handlers.GetTimers)
 	router.GET("/timers/:id", handlers.GetTimerHistory)
 	router.POST("/timers", handlers.CreateTimer)
