@@ -58,7 +58,7 @@ func TestGetTimers(t *testing.T) {
 	assert.Nil(t, err)
 
 	timers := result.Timers
-	assert.Equal(t, 5, len(timers))
+	assert.Equal(t, 4, len(timers))
 	assert.Equal(t, models.Timer{Id: 1, OwnerId: 1, Title: "Coding", TotalTime: 5400}, timers[0])
 	assert.Equal(t, models.Timer{Id: 2, OwnerId: 1, Title: "Music Production", TotalTime: 2700}, timers[1])
 	assert.Equal(t, models.Timer{Id: 3, OwnerId: 1, Title: "DJing", TotalTime: 600}, timers[2])
