@@ -10,6 +10,7 @@ import TimerList from "@/components/timer-list";
 interface BackendTimer {
   id: number;
   title: string;
+  totalTime: number;
 }
 
 export default function HomePage() {
@@ -18,12 +19,12 @@ export default function HomePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/timers");
+        const response = await fetch("/api/users/1/timers");
         const jsonResponse = await response.json();
         const parsedTimers: TimerProps[] = await jsonResponse.timers.map((timer: BackendTimer) => ({
           id: timer.id,
           title: timer.title,
-          totalTime: 115843,
+          totalTime: timer.totalTime,
         }));
         setTimers(parsedTimers);
       } catch (error) {
