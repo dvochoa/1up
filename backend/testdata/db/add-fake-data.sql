@@ -1,25 +1,3 @@
-CREATE TABLE IF NOT EXISTS users (
-  id                        BIGSERIAL PRIMARY KEY,
-  first_name                VARCHAR(255) NOT NULL,
-  last_name                 VARCHAR(255) NOT NULL,
-  email                     VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS timerSettings (
-  id                        BIGSERIAL PRIMARY KEY,
-  owner_id                  BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  title                     VARCHAR(128) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS timerProgress (
-  id                          BIGSERIAL PRIMARY KEY,
-  timer_setting_id            BIGINT NOT NULL REFERENCES timerSettings(id) ON DELETE CASCADE,
-  session_duration_in_seconds INTEGER NOT NULL,
-  session_timestamp           TIMESTAMPTZ NOT NULL
-);
-
--- TODO: tests should just reference the real init scripts rather than duplicating schema
-
 INSERT INTO users (first_name, last_name, email) VALUES ('Danny', 'Ochoa', 'danny@ochoa.com');
 INSERT INTO users (first_name, last_name, email) VALUES ('LeBron', 'James', 'lebron@james.com');
 
