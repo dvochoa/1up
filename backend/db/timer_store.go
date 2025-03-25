@@ -77,16 +77,17 @@ func (store TimerStore) GetTimerProgress(ctx context.Context, timerSettingId int
 }
 
 // CreateTimerSetting inserts a new timer into the timerSettings table
-func (store TimerStore) CreateTimerSetting(ctx context.Context, timer *models.Timer) error {
+func (store TimerStore) CreateTimerSetting(ctx context.Context, createReq *models.CreateTimerRequest) (models.Timer, error) {
 	queryCtx, cancel := getQueryCtx(ctx)
 	defer cancel()
 
+	timer := models.Timer{OwnerId: createReq.OwnerId, Title: createReq.Title}
 	err := store.conn.QueryRow(
 		queryCtx,
 		"INSERT INTO timerSettings (owner_id, title) VALUES ($1, $2) RETURNING id",
 		timer.OwnerId, timer.Title,
 	).Scan(&timer.Id)
-	return err
+	return timer, err
 }
 
 // UpdateTimer replaces the timer keyed by id.

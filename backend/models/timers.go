@@ -15,6 +15,11 @@ type TimerSession struct {
 	SessionDurationInSeconds int32     `json:"sessionDurationInSeconds"`
 }
 
+type CreateTimerRequest struct {
+	OwnerId int64  `json:"ownerId"`
+	Title   string `json:"title"`
+}
+
 type GetTimersResponse struct {
 	Timers []Timer `json:"timers"`
 }

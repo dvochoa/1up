@@ -55,21 +55,20 @@ func GetTimerHistory(c *gin.Context) {
 
 // CreateTimer inserts a new timer in the db
 func CreateTimer(c *gin.Context) {
-	var newTimer models.Timer
-
-	if err := c.BindJSON(&newTimer); err != nil {
+	var createTimerRequest models.CreateTimerRequest
+	if err := c.BindJSON(&createTimerRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err := TimerStore.CreateTimerSetting(c.Request.Context(), &newTimer)
+	timer, err := TimerStore.CreateTimerSetting(c.Request.Context(), &createTimerRequest)
 	if err != nil {
-		log.Printf("Error when creating timer %v: %v", newTimer, err)
+		log.Printf("Error when creating timer %v: %v", createTimerRequest, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create timer"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, newTimer)
+	c.JSON(http.StatusCreated, timer)
 }
 
 // UpdateTimer updates the data associated with the timer keyed by id

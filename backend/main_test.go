@@ -83,8 +83,6 @@ func TestGetTimerHistory(t *testing.T) {
 	assert.Equal(t, models.TimerSession{Id: 2, SessionTimestamp: time.Date(2025, 3, 20, 10, 0, 0, 0, time.UTC), SessionDurationInSeconds: 1800}, timerSessions[1])
 }
 
-// TODO: When calling createTimer the frontend won't be able to supply the id, any way to make the model have id nullable?
-// Or should I create a different interface?
 func TestCreateTimer(t *testing.T) {
 	// 1. No timer with Id=6 is found
 	getResponseWriter := serveHTTP(http.MethodGet, "/users/2/timers", nil)
@@ -97,7 +95,7 @@ func TestCreateTimer(t *testing.T) {
 	assert.Equal(t, int64(5), getTimersResult.Timers[0].Id)
 
 	// 2. Create a timer
-	newTimer := models.Timer{Id: 6, OwnerId: 2, Title: "Cooking"}
+	newTimer := models.Timer{OwnerId: 2, Title: "Cooking"}
 	jsonValue, _ := json.Marshal(newTimer)
 
 	postResponseWriter := serveHTTP(http.MethodPost, "/timers", bytes.NewBuffer(jsonValue))
@@ -105,6 +103,8 @@ func TestCreateTimer(t *testing.T) {
 
 	var result models.Timer
 	err = json.Unmarshal(postResponseWriter.Body.Bytes(), &result)
+	newTimer.Id = result.Id
+
 	assert.Nil(t, err)
 	assert.Equal(t, newTimer, result)
 
