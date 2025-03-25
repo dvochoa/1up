@@ -7,7 +7,7 @@ import ThemeToggle from "@/components/theme-toggle";
 import { TimerProps } from "@/components/timer";
 import TimerList from "@/components/timer-list";
 
-interface BackendTimer {
+interface TimerOverview {
   id: number;
   title: string;
   totalTime: number;
@@ -21,11 +21,13 @@ export default function HomePage() {
       try {
         const response = await fetch("/api/users/1/timers");
         const jsonResponse = await response.json();
-        const parsedTimers: TimerProps[] = await jsonResponse.timers.map((timer: BackendTimer) => ({
-          id: timer.id,
-          title: timer.title,
-          totalTime: timer.totalTime,
-        }));
+        const parsedTimers: TimerProps[] = await jsonResponse.timerOverviews.map(
+          (timer: TimerOverview) => ({
+            id: timer.id,
+            title: timer.title,
+            totalTime: timer.totalTime,
+          }),
+        );
         setTimers(parsedTimers);
       } catch (error) {
         // TODO: Handle error as desired

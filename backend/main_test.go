@@ -23,6 +23,7 @@ import (
 
 var router *gin.Engine
 
+// TODO: Reset tables in between tests
 // Runs before all tests
 func TestMain(m *testing.M) {
 	// Set up gin
@@ -57,12 +58,12 @@ func TestGetTimers(t *testing.T) {
 	err := json.Unmarshal(responseWriter.Body.Bytes(), &result)
 	assert.Nil(t, err)
 
-	timers := result.Timers
+	timers := result.TimerOverviews
 	assert.Equal(t, 4, len(timers))
-	assert.Equal(t, models.Timer{Id: 1, OwnerId: 1, Title: "Coding", TotalTime: 5400}, timers[0])
-	assert.Equal(t, models.Timer{Id: 2, OwnerId: 1, Title: "Music Production", TotalTime: 2700}, timers[1])
-	assert.Equal(t, models.Timer{Id: 3, OwnerId: 1, Title: "DJing", TotalTime: 600}, timers[2])
-	assert.Equal(t, models.Timer{Id: 4, OwnerId: 1, Title: "Piano", TotalTime: 0}, timers[3])
+	assert.Equal(t, models.TimerOverview{Id: 1, OwnerId: 1, Title: "Coding", TotalTime: 5400}, timers[0])
+	assert.Equal(t, models.TimerOverview{Id: 2, OwnerId: 1, Title: "Music Production", TotalTime: 2700}, timers[1])
+	assert.Equal(t, models.TimerOverview{Id: 3, OwnerId: 1, Title: "DJing", TotalTime: 600}, timers[2])
+	assert.Equal(t, models.TimerOverview{Id: 4, OwnerId: 1, Title: "Piano", TotalTime: 0}, timers[3])
 }
 
 func TestGetTimerHistory(t *testing.T) {
@@ -77,10 +78,46 @@ func TestGetTimerHistory(t *testing.T) {
 
 	// Convert timestamps to UTC so that timestamp value is constant no matter the timezone this test is ran in
 	for i := range timerSessions {
-		timerSessions[i].SessionTimestamp = timerSessions[i].SessionTimestamp.UTC()
+		timerSessions[i].CreatedAt = timerSessions[i].CreatedAt.UTC()
 	}
-	assert.Equal(t, models.TimerSession{Id: 1, SessionTimestamp: time.Date(2025, 3, 15, 12, 0, 0, 0, time.UTC), SessionDurationInSeconds: 3600}, timerSessions[0])
-	assert.Equal(t, models.TimerSession{Id: 2, SessionTimestamp: time.Date(2025, 3, 20, 10, 0, 0, 0, time.UTC), SessionDurationInSeconds: 1800}, timerSessions[1])
+	assert.Equal(t, 2, len(timerSessions))
+	assert.Equal(t, models.TimerSession{Id: 1, CreatedAt: time.Date(2025, 3, 15, 12, 0, 0, 0, time.UTC), SessionDurationInSeconds: 3600}, timerSessions[0])
+	assert.Equal(t, models.TimerSession{Id: 2, CreatedAt: time.Date(2025, 3, 20, 10, 0, 0, 0, time.UTC), SessionDurationInSeconds: 1800}, timerSessions[1])
+}
+
+func TestAddTimerSession(t *testing.T) {
+	// 1. Add new session
+	createTimerRequest := models.CreateTimerSessionRequest{SessionDurationInSeconds: 3600}
+	jsonPayload, _ := json.Marshal(createTimerRequest)
+
+	timeBeforeInsert := time.Now()
+	postResponseWriter := serveHTTP(http.MethodPost, "/timers/4", bytes.NewBuffer(jsonPayload))
+	timeAfterInsert := time.Now()
+
+	assert.EqualValues(t, http.StatusCreated, postResponseWriter.Code)
+
+	// 2. Validate the new session
+	responseWriter := serveHTTP(http.MethodGet, "/timers/4", nil)
+	assert.Equal(t, http.StatusOK, responseWriter.Code)
+
+	var result models.GetTimerHistoryResponse
+	err := json.Unmarshal(responseWriter.Body.Bytes(), &result)
+	assert.Nil(t, err)
+
+	timerSessions := result.TimerSessions
+
+	// Convert timestamps to UTC so that timestamp value is constant no matter the timezone this test is ran in
+	for i := range timerSessions {
+		timerSessions[i].CreatedAt = timerSessions[i].CreatedAt.UTC()
+	}
+
+	assert.Equal(t, 1, len(timerSessions))
+
+	newTimerSession := timerSessions[0]
+	assert.Equal(t, int64(7), newTimerSession.Id)
+	assert.WithinDuration(t, timeBeforeInsert, newTimerSession.CreatedAt, time.Second)
+	assert.WithinDuration(t, timeAfterInsert, newTimerSession.CreatedAt, time.Second)
+	assert.Equal(t, int32(3600), newTimerSession.SessionDurationInSeconds)
 }
 
 func TestCreateTimer(t *testing.T) {
@@ -91,17 +128,17 @@ func TestCreateTimer(t *testing.T) {
 	var getTimersResult models.GetTimersResponse
 	err := json.Unmarshal(getResponseWriter.Body.Bytes(), &getTimersResult)
 	assert.Nil(t, err)
-	assert.Equal(t, 1, len(getTimersResult.Timers))
-	assert.Equal(t, int64(5), getTimersResult.Timers[0].Id)
+	assert.Equal(t, 1, len(getTimersResult.TimerOverviews))
+	assert.Equal(t, int64(5), getTimersResult.TimerOverviews[0].Id)
 
 	// 2. Create a timer
-	newTimer := models.Timer{OwnerId: 2, Title: "Cooking"}
-	jsonValue, _ := json.Marshal(newTimer)
+	newTimer := models.TimerOverview{OwnerId: 2, Title: "Cooking"}
+	jsonPayload, _ := json.Marshal(newTimer)
 
-	postResponseWriter := serveHTTP(http.MethodPost, "/timers", bytes.NewBuffer(jsonValue))
+	postResponseWriter := serveHTTP(http.MethodPost, "/timers", bytes.NewBuffer(jsonPayload))
 	assert.EqualValues(t, http.StatusCreated, postResponseWriter.Code)
 
-	var result models.Timer
+	var result models.TimerOverview
 	err = json.Unmarshal(postResponseWriter.Body.Bytes(), &result)
 	newTimer.Id = result.Id
 
@@ -114,13 +151,13 @@ func TestCreateTimer(t *testing.T) {
 
 	err = json.Unmarshal(getResponseWriter.Body.Bytes(), &getTimersResult)
 	assert.Nil(t, err)
-	assert.Equal(t, 2, len(getTimersResult.Timers))
-	assert.Equal(t, newTimer, getTimersResult.Timers[1])
+	assert.Equal(t, 2, len(getTimersResult.TimerOverviews))
+	assert.Equal(t, newTimer, getTimersResult.TimerOverviews[1])
 }
 
 func TestUpdateTimerSettings(t *testing.T) {
 	// 1. Update timer
-	updatedTimer := models.Timer{Id: 1, OwnerId: 1, Title: "Dancing"}
+	updatedTimer := models.TimerOverview{Id: 1, OwnerId: 1, Title: "Dancing"}
 	jsonValue, _ := json.Marshal(updatedTimer)
 
 	putResponseWriter := serveHTTP(http.MethodPut, "/timers/1", bytes.NewBuffer(jsonValue))
@@ -133,8 +170,8 @@ func TestUpdateTimerSettings(t *testing.T) {
 	var getTimersResult models.GetTimersResponse
 	err := json.Unmarshal(getResponseWriter.Body.Bytes(), &getTimersResult)
 	assert.Nil(t, err)
-	assert.Equal(t, 4, len(getTimersResult.Timers))
-	assert.Equal(t, models.Timer{Id: 1, OwnerId: 1, Title: "Dancing", TotalTime: 5400}, getTimersResult.Timers[0])
+	assert.Equal(t, 4, len(getTimersResult.TimerOverviews))
+	assert.Equal(t, models.TimerOverview{Id: 1, OwnerId: 1, Title: "Dancing", TotalTime: 5400}, getTimersResult.TimerOverviews[0])
 }
 
 func TestDeleteTimer(t *testing.T) {
@@ -148,7 +185,7 @@ func TestDeleteTimer(t *testing.T) {
 	err := json.Unmarshal(getResponseWriter.Body.Bytes(), &getTimersResult)
 	assert.Nil(t, err)
 
-	for _, timer := range getTimersResult.Timers {
+	for _, timer := range getTimersResult.TimerOverviews {
 		assert.NotEqual(t, 1, timer.Id)
 	}
 }

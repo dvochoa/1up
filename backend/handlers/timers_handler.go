@@ -23,29 +23,29 @@ func GetTimers(c *gin.Context) {
 		return
 	}
 
-	timers, err := TimerStore.GetTimers(c.Request.Context(), userId)
+	timerOverviews, err := TimerStore.GetTimers(c.Request.Context(), userId)
 	if err != nil {
 		log.Printf("Error when calling TimerStore.GetTimers: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get timers"})
 		return
 	}
 
-	response := models.GetTimersResponse{Timers: timers}
+	response := models.GetTimersResponse{TimerOverviews: timerOverviews}
 	c.JSON(http.StatusOK, response)
 }
 
 // GetTimerHistory returns the history of the timer with matching id, if any
 func GetTimerHistory(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	timerId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid timerId"})
 		return
 	}
 
-	timerSessions, err := TimerStore.GetTimerProgress(c.Request.Context(), id)
+	timerSessions, err := TimerStore.GetTimerSessions(c.Request.Context(), timerId)
 	if err != nil {
-		log.Printf("Error when calling TimerStore.GetTimerProgress: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Failed to get history for timer with id=%d", id)})
+		log.Printf("Error when calling TimerStore.GetTimerSessions: %v", err)
+		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Failed to get history for timer with id=%d", timerId)})
 		return
 	}
 
@@ -53,11 +53,35 @@ func GetTimerHistory(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// AddTimerSession writes a new row into the timerSessions table
+func AddTimerSession(c *gin.Context) {
+	timerSettingId, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid timerId"})
+		return
+	}
+
+	var createTimerSessionRequest models.CreateTimerSessionRequest
+	if err := c.BindJSON(&createTimerSessionRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid createTimerSessionRequest"})
+		return
+	}
+
+	timerSession, err := TimerStore.AddTimerSession(c.Request.Context(), timerSettingId, createTimerSessionRequest)
+	if err != nil {
+		log.Printf("Error when committing session for timer %v: %v", timerSettingId, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to commit session for timer"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, timerSession)
+}
+
 // CreateTimer inserts a new timer in the db
 func CreateTimer(c *gin.Context) {
 	var createTimerRequest models.CreateTimerRequest
 	if err := c.BindJSON(&createTimerRequest); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid createTimerRequest"})
 		return
 	}
 
@@ -73,7 +97,7 @@ func CreateTimer(c *gin.Context) {
 
 // UpdateTimer updates the data associated with the timer keyed by id
 func UpdateTimerSettings(c *gin.Context) {
-	var updatedTimer models.Timer
+	var updatedTimer models.TimerOverview
 
 	if err := c.BindJSON(&updatedTimer); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

@@ -11,9 +11,9 @@ CREATE TABLE IF NOT EXISTS timerSettings (
   title                     VARCHAR(128) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS timerProgress (
+CREATE TABLE IF NOT EXISTS timerSessions (
   id                          BIGSERIAL PRIMARY KEY,
   timer_setting_id            BIGINT NOT NULL REFERENCES timerSettings(id) ON DELETE CASCADE,
   session_duration_in_seconds INTEGER NOT NULL,
-  session_timestamp           TIMESTAMPTZ NOT NULL
+  created_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
