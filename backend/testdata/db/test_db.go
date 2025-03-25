@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"log"
+	"os"
 	"time"
 
 	"github.com/testcontainers/testcontainers-go"
@@ -14,10 +15,12 @@ var pgContainer *postgres.PostgresContainer
 
 // StartTestDatabase initializes a postgres testcontainer
 func StartTestDatabase(ctx context.Context) error {
+	initScripts := getDatabaseInitalizationScripts()
+
 	var err error
 	pgContainer, err = postgres.Run(ctx,
 		"postgres:16-alpine",
-		postgres.WithInitScripts("testdata/db/init-db.sql"),
+		postgres.WithInitScripts(initScripts...),
 		postgres.WithDatabase("test-db"),
 		postgres.WithUsername("postgres"),
 		postgres.WithPassword("postgres"),
@@ -30,6 +33,24 @@ func StartTestDatabase(ctx context.Context) error {
 		return err
 	}
 	return nil
+}
+
+// getDatabaseInitalizationScripts returns a slice of filenames used to set the DB schema
+func getDatabaseInitalizationScripts() []string {
+	dirPath := "../db/scripts"
+
+	entries, err := os.ReadDir(dirPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	numEntries := len(entries)
+	filenames := make([]string, numEntries+1)
+	for i, entry := range entries {
+		filenames[i] = dirPath + "/" + entry.Name()
+	}
+	filenames[numEntries] = "testdata/db/add-fake-data.sql"
+	return filenames
 }
 
 // GetTestDatabaseConnection return a connection string that can be used to connect to the test db
