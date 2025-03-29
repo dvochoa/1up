@@ -8,7 +8,12 @@ const TimerList: React.FC<TimerListProps> = ({ timers }) => {
   return (
     <div>
       {timers.map((timer) => (
-        <Timer key={timer.id} id={timer.id} title={timer.title} totalTime={timer.totalTime}></Timer>
+        <Timer
+          key={timer.id}
+          id={timer.id}
+          title={timer.title}
+          totalTimeInSeconds={timer.totalTimeInSeconds}
+        ></Timer>
       ))}
     </div>
   );

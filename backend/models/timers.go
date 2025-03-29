@@ -3,10 +3,10 @@ package models
 import "time"
 
 type TimerOverview struct {
-	Id        int64  `json:"id"`
-	OwnerId   int64  `json:"ownerId"`
-	Title     string `json:"title"`
-	TotalTime int64  `json:"totalTime"`
+	Id                 int64  `json:"id"`
+	OwnerId            int64  `json:"ownerId"`
+	Title              string `json:"title"`
+	TotalTimeInSeconds int64  `json:"totalTimeInSeconds"`
 }
 
 type GetTimersResponse struct {

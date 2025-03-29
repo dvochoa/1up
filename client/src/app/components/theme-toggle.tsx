@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 
-const iconWidth = 20;
-const iconHeight = 20;
+const ICON_WIDTH = 20;
+const ICON_HEIGHT = 20;
 
 const ThemeToggle = () => {
   const [mounted, setMounted] = useState(false);
@@ -32,9 +32,9 @@ const ThemeToggle = () => {
             ? "/images/dark-mode-icon.svg"
             : "/images/light-mode-icon.svg"
         }
-        width={iconWidth}
-        height={iconHeight}
-        alt={(currentTheme || "light") === "dark" ? "Light mode icon" : "Dark mode icon"}
+        width={ICON_WIDTH}
+        height={ICON_HEIGHT}
+        alt="A Sun/Moon that when clicked toggles the color scheme between light and dark mode"
       />
     </button>
   );

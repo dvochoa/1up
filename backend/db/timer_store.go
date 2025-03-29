@@ -50,7 +50,11 @@ func (store TimerStore) GetTimers(ctx context.Context, userId int64) ([]models.T
 
 	rows, _ := store.conn.Query(
 		queryCtx,
-		`SELECT ts.id as id, ts.owner_id as ownerId, ts.title as title, COALESCE(SUM(tp.session_duration_in_seconds), 0) as totalTime
+		`SELECT 
+			ts.id as id,
+			ts.owner_id as ownerId,
+			ts.title as title,
+			COALESCE(SUM(tp.session_duration_in_seconds), 0) as totalTimeInSeconds
 		 FROM (
 		 	SELECT id, owner_id, title FROM timersettings WHERE owner_id = $1
 		 ) ts
