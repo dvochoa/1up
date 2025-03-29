@@ -10,7 +10,7 @@ import TimerList from "@/components/timer-list";
 interface TimerOverview {
   id: number;
   title: string;
-  totalTime: number;
+  totalTimeInSeconds: number;
 }
 
 export default function HomePage() {
@@ -25,7 +25,7 @@ export default function HomePage() {
           (timer: TimerOverview) => ({
             id: timer.id,
             title: timer.title,
-            totalTime: timer.totalTime,
+            totalTimeInSeconds: timer.totalTimeInSeconds,
           }),
         );
         setTimers(parsedTimers);

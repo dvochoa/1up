@@ -60,10 +60,10 @@ func TestGetTimers(t *testing.T) {
 
 	timers := result.TimerOverviews
 	assert.Equal(t, 4, len(timers))
-	assert.Equal(t, models.TimerOverview{Id: 1, OwnerId: 1, Title: "Coding", TotalTime: 5400}, timers[0])
-	assert.Equal(t, models.TimerOverview{Id: 2, OwnerId: 1, Title: "Music Production", TotalTime: 2700}, timers[1])
-	assert.Equal(t, models.TimerOverview{Id: 3, OwnerId: 1, Title: "DJing", TotalTime: 600}, timers[2])
-	assert.Equal(t, models.TimerOverview{Id: 4, OwnerId: 1, Title: "Piano", TotalTime: 0}, timers[3])
+	assert.Equal(t, models.TimerOverview{Id: 1, OwnerId: 1, Title: "Coding", TotalTimeInSeconds: 5400}, timers[0])
+	assert.Equal(t, models.TimerOverview{Id: 2, OwnerId: 1, Title: "Music Production", TotalTimeInSeconds: 2700}, timers[1])
+	assert.Equal(t, models.TimerOverview{Id: 3, OwnerId: 1, Title: "DJing", TotalTimeInSeconds: 600}, timers[2])
+	assert.Equal(t, models.TimerOverview{Id: 4, OwnerId: 1, Title: "Piano", TotalTimeInSeconds: 0}, timers[3])
 }
 
 func TestGetTimerHistory(t *testing.T) {
@@ -171,7 +171,7 @@ func TestUpdateTimerSettings(t *testing.T) {
 	err := json.Unmarshal(getResponseWriter.Body.Bytes(), &getTimersResult)
 	assert.Nil(t, err)
 	assert.Equal(t, 4, len(getTimersResult.TimerOverviews))
-	assert.Equal(t, models.TimerOverview{Id: 1, OwnerId: 1, Title: "Dancing", TotalTime: 5400}, getTimersResult.TimerOverviews[0])
+	assert.Equal(t, models.TimerOverview{Id: 1, OwnerId: 1, Title: "Dancing", TotalTimeInSeconds: 5400}, getTimersResult.TimerOverviews[0])
 }
 
 func TestDeleteTimer(t *testing.T) {
