@@ -104,9 +104,8 @@ export const Timer: React.FC<TimerProps> = ({ id, title, totalTimeInSeconds: ini
   };
 
   return (
-    // TODO: Change this whole thing to be a button to get better default semantics
     <div
-      className={`my-5 rounded-sm shadow-md dark:shadow-none ${getTimerColor()}`}
+      className={`rounded-sm shadow-md dark:shadow-none ${getTimerColor()}`}
       onClick={toggleState}
     >
       <div className={`m-2 py-3 pl-1`}>
@@ -122,7 +121,7 @@ export const Timer: React.FC<TimerProps> = ({ id, title, totalTimeInSeconds: ini
           {!isRunning && sessionTimeInSeconds != 0 && (
             <button className="ml-auto" onClick={commitTime}>
               <Image
-                src="/images/arrow-icon.svg"
+                src="/images/right-arrow-icon.svg"
                 width={ICON_WIDTH}
                 height={ICON_HEIGHT}
                 alt="An arrow, on click the current session's progress is committed"

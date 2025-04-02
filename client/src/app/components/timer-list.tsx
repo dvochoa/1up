@@ -6,7 +6,7 @@ interface TimerListProps {
 
 const TimerList: React.FC<TimerListProps> = ({ timers }) => {
   return (
-    <div>
+    <div className="space-y-5">
       {timers.map((timer) => (
         <Timer
           key={timer.id}
