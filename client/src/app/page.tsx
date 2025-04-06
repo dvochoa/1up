@@ -6,7 +6,6 @@ import styles from "./page.module.css";
 import ThemeToggle from "@/components/theme-toggle";
 import { TimerProps } from "@/components/timer";
 import TimerList from "@/components/timer-list";
-import CreateTimer from "@/components/create-timer";
 
 interface TimerOverview {
   id: number;
@@ -46,8 +45,7 @@ export default function HomePage() {
       <ThemeToggle />
 
       <main className="col-start-2 row-start-2 space-y-5">
-        <TimerList timers={timers} />
-        <CreateTimer onTimerCreated={fetchTimers} />
+        <TimerList timers={timers} onTimerCreated={fetchTimers} onTimerDeleted={fetchTimers} />
       </main>
     </div>
   );

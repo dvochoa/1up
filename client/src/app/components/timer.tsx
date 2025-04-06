@@ -1,5 +1,6 @@
 "use client";
 
+import styles from "./timer.module.css";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
@@ -7,14 +8,22 @@ export interface TimerProps {
   id: number;
   title: string;
   totalTimeInSeconds: number;
+  onTimerDeleted: () => void;
 }
 
 const SECONDS_IN_A_HOUR: number = 3600;
 const SECONDS_IN_A_MINUTE: number = 60;
 const ICON_WIDTH = 30;
 const ICON_HEIGHT = 30;
+const DELETE_ICON_WIDTH = 18;
+const DELETE_ICON_HEIGHT = 18;
 
-export const Timer: React.FC<TimerProps> = ({ id, title, totalTimeInSeconds: initialTotal }) => {
+export const Timer: React.FC<TimerProps> = ({
+  id,
+  title,
+  totalTimeInSeconds: initialTotal,
+  onTimerDeleted,
+}) => {
   const [totalTimeInSeconds, setTotalTimeInSeconds] = useState(initialTotal);
   const [sessionTimeInSeconds, setSessionTimeInSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -83,7 +92,7 @@ export const Timer: React.FC<TimerProps> = ({ id, title, totalTimeInSeconds: ini
     }
   };
 
-  const commitTime = async () => {
+  const commitSession = async () => {
     try {
       const response = await fetch(`/api/timers/${id}`, {
         method: "POST",
@@ -103,33 +112,63 @@ export const Timer: React.FC<TimerProps> = ({ id, title, totalTimeInSeconds: ini
     }
   };
 
+  const deleteTimer = async () => {
+    try {
+      const response = await fetch(`/api/timers/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        onTimerDeleted();
+      } else {
+        // TODO: Communicate the failure to the user
+        console.error(
+          "Error Code %d encountered when attempting to delete timer: ",
+          response.status,
+        );
+      }
+    } catch (error) {
+      console.error("Parse error: ", error);
+    }
+  };
+
   return (
     <div
       className={`rounded-sm shadow-md dark:shadow-none ${getTimerColor()}`}
       onClick={toggleState}
     >
-      <div className={`m-2 py-3 pl-1`}>
-        <span>
+      <div className={`${styles["grid-container"]} grid h-full p-2 py-5 pl-3`}>
+        <span className="col-1 row-1">
           <span className="mr-3 text-xl font-bold">{title}</span>
           <span className="text-sm font-bold text-neutral-800 dark:text-neutral-300">
             {formatTotalTime()}
           </span>
         </span>
 
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl">{formatTime()}</h1>
-          {!isRunning && sessionTimeInSeconds != 0 && (
-            <button className="ml-auto" onClick={commitTime}>
-              <Image
-                src="/images/right-arrow-icon.svg"
-                width={ICON_WIDTH}
-                height={ICON_HEIGHT}
-                alt="An arrow, on click the current session's progress is committed"
-                className="dark:invert"
-              />
-            </button>
-          )}
-        </div>
+        {!isRunning && (
+          <button className="col-2 row-1 ml-auto" onClick={deleteTimer}>
+            <Image
+              src="/images/delete-timer-icon.svg"
+              width={DELETE_ICON_WIDTH}
+              height={DELETE_ICON_HEIGHT}
+              alt="A trash can, on click this timer is deleted"
+              className="dark:invert"
+            />
+          </button>
+        )}
+
+        <h1 className="col-1 row-3 text-2xl">{formatTime()}</h1>
+
+        {!isRunning && sessionTimeInSeconds != 0 && (
+          <button className="col-2 row-3 ml-auto" onClick={commitSession}>
+            <Image
+              src="/images/commit-icon.svg"
+              width={ICON_WIDTH}
+              height={ICON_HEIGHT}
+              alt="An arrow, on click the current session's progress is committed"
+              className="dark:invert"
+            />
+          </button>
+        )}
       </div>
     </div>
   );

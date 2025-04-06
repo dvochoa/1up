@@ -1,5 +1,14 @@
 import { ThemeProvider } from "next-themes";
 
+import { Merriweather } from "next/font/google";
+
+const merriweather = Merriweather({
+  weight: ["300", "400", "700", "900"],
+  style: ["normal", "italic"],
+  subsets: ["latin"],
+  display: "swap",
+});
+
 import "@/styles/global.css";
 
 export const metadata = {
@@ -9,7 +18,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={merriweather.className} suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class">{children}</ThemeProvider>
       </body>

@@ -1,0 +1,4 @@
+.grid-container {
+  grid-template-rows: 33% 33% 33%;
+  grid-template-columns: 80%;
+}
