@@ -24,7 +24,7 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={() => (currentTheme == "dark" ? setTheme("light") : setTheme("dark"))}
-      className="w-fit px-4 py-2 lg:px-8 lg:py-2"
+      className="place-self-center"
     >
       <Image
         src={

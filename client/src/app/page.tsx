@@ -44,7 +44,7 @@ export default function HomePage() {
       <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
       <ThemeToggle />
 
-      <main className="col-start-2 row-start-2 space-y-5">
+      <main className="col-start-2 row-start-2">
         <TimerList timers={timers} onTimerCreated={fetchTimers} onTimerDeleted={fetchTimers} />
       </main>
     </div>

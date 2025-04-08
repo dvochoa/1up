@@ -22,7 +22,7 @@ const CreateTimer: React.FC<CreateTimerProps> = ({ onTimerCreated }) => {
   return (
     <div className="relative flex flex-col">
       <div
-        className={`absolute inset-0 flex transform items-center transition-all duration-300 ease-in-out ${
+        className={`absolute inset-0 transform transition-all duration-300 ease-in-out lg:flex lg:items-center ${
           isCreating ? "pointer-events-none opacity-0" : "opacity-100"
         }`}
       >
