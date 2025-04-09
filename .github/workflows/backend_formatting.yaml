@@ -8,8 +8,8 @@ jobs:
     name: format
     runs-on: ubuntu-latest
     defaults:
-        run:
-          working-directory: ./backend
+      run:
+        working-directory: ./backend
     steps:
       - name: Code checkout
         uses: actions/checkout@v4
@@ -17,7 +17,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-            go-version-file: backend/go.mod
+          go-version-file: backend/go.mod
 
       - name: Check formatting
         run: |
