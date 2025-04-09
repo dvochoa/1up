@@ -24,7 +24,7 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={() => (currentTheme == "dark" ? setTheme("light") : setTheme("dark"))}
-      className="place-self-center"
+      className="flex w-full place-self-center border-2 border-solid"
     >
       <Image
         src={

@@ -1,0 +1,11 @@
+/* Base grid layout for mobile (default) */
+.grid-container {
+    grid-template-rows: 15% 70% 15%;
+}
+
+/* Large screens (laptops, desktops) */
+@media (min-width: 1024px) {
+    .grid-container {
+        grid-template-rows: 10% 80% 10%;
+    }
+}
