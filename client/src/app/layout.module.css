@@ -1,6 +1,7 @@
 /* Base grid layout for mobile (default) */
 .grid-container {
-    grid-template-rows: 15% 70% 15%;
+    display: grid;
+    grid-template-rows: 30vh 1fr 30vh;
 }
 
 /* Large screens (laptops, desktops) */

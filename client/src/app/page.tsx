@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 
 import styles from "./page.module.css";
-// import ThemeToggle from "@/components/theme-toggle";
 import { TimerProps } from "@/components/timer";
 import TimerList from "@/components/timer-list";
 
@@ -39,12 +38,10 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className={`${styles["grid-container"]} grid`}>
+    <div className={`${styles["grid-container"]}`}>
       <meta charSet="utf-8"></meta>
       <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
-      {/* <ThemeToggle /> */}
-
-      <main className="col-start-2 row-start-2">
+      <main className="col-start-2">
         <TimerList timers={timers} onTimerCreated={fetchTimers} onTimerDeleted={fetchTimers} />
       </main>
     </div>
