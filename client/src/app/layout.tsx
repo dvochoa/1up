@@ -1,6 +1,6 @@
-import { ThemeProvider } from "next-themes";
-
 import { Merriweather } from "next/font/google";
+
+import Header from "@/components/header";
 
 const merriweather = Merriweather({
   weight: ["300", "400", "700", "900"],
@@ -19,8 +19,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={merriweather.className} suppressHydrationWarning>
-      <body>
-        <ThemeProvider attribute="class">{children}</ThemeProvider>
+      <body className="flex min-h-lvh flex-col">
+        <Header className="h-[15vh] flex-shrink-0 lg:h-[10vh]" />
+        <main className="flex-grow pb-[0vh]">{children}</main>
       </body>
     </html>
   );

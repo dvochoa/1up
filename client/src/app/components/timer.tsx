@@ -136,7 +136,7 @@ export const Timer: React.FC<TimerProps> = ({
       className={`rounded-sm shadow-md dark:shadow-none ${getTimerColor()}`}
       onClick={toggleState}
     >
-      <div className={`${styles["grid-container"]} grid h-full p-2 pb-3 pl-3`}>
+      <div className={`${styles["grid-container"]} h-full p-2 pb-3 pl-3`}>
         <span className="col-1 row-1">
           <span className="mr-3 text-xl font-bold">{title}</span>
           <span className="text-xs text-neutral-500">{formatTotalTime()}</span>

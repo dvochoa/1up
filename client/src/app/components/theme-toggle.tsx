@@ -7,7 +7,7 @@ import Image from "next/image";
 const ICON_WIDTH = 20;
 const ICON_HEIGHT = 20;
 
-const ThemeToggle = () => {
+const ThemeToggle = ({ className = "" }: { className?: string }) => {
   const [mounted, setMounted] = useState(false);
   const { systemTheme, theme, setTheme } = useTheme();
   const currentTheme = theme === "system" ? systemTheme : theme;
@@ -24,7 +24,7 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={() => (currentTheme == "dark" ? setTheme("light") : setTheme("dark"))}
-      className="place-self-center"
+      className={className}
     >
       <Image
         src={

@@ -1,12 +1,12 @@
 /* Base grid layout for mobile (default) */
 .grid-container {
   display: grid;
-  grid-template-columns: 20% 60% 20%;
+  grid-template-rows: 30vh 1fr 30vh;
 }
 
 /* Large screens (laptops, desktops) */
 @media (min-width: 1024px) {
   .grid-container {
-    grid-template-columns: 5% 90% 5%;
+    grid-template-rows: 10% 80% 10%;
   }
 }
