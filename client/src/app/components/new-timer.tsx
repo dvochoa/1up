@@ -19,6 +19,7 @@ export const NewTimer: React.FC<NewTimerProps> = ({ onTimerCreated, onTimerDelet
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent page refresh since update is handled on the client
+    // TODO: Show the user some feedback on this
     if (!title.trim()) return;
 
     try {
@@ -55,7 +56,7 @@ export const NewTimer: React.FC<NewTimerProps> = ({ onTimerCreated, onTimerDelet
           ></input>
         </form>
 
-        <button className="col-2 row-1 ml-auto" onClick={onTimerDeleted}>
+        <button className="col-2 row-1 ml-auto cursor-pointer" onClick={onTimerDeleted}>
           <Image
             src="/images/delete-timer-icon.svg"
             width={DELETE_ICON_WIDTH}
@@ -65,7 +66,7 @@ export const NewTimer: React.FC<NewTimerProps> = ({ onTimerCreated, onTimerDelet
           />
         </button>
 
-        <button className="col-2 row-3 ml-auto" onClick={handleSubmit}>
+        <button className="col-2 row-3 ml-auto cursor-pointer" onClick={handleSubmit}>
           <Image
             src="/images/commit-icon.svg"
             width={ICON_WIDTH}
