@@ -19,7 +19,7 @@ Make sure you have the following installed locally:
 Frontend code is placed in the `./client/` directory whereas backend code is placed in the `./backend/` directory.
 
 You can deploy the site locally by running: 
-- `docker compose up --build`: For production
+- `docker compose -f compose.yaml up --build`: For production
 - `docker compose -f compose.yaml -f compose.dev.yaml up --build`: For development
 
 Development will come with helpful features such as hot reloading but will be a more bloated build.
