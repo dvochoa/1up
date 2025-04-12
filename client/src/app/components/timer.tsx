@@ -91,7 +91,7 @@ export const Timer: React.FC<TimerProps> = ({
   };
 
   const deleteTimer = async (e: React.MouseEvent) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Surrounding timer div is clickable so stop propagation of click event
     try {
       const response = await fetch(`/api/timers/${id}`, {
         method: "DELETE",
@@ -111,13 +111,13 @@ export const Timer: React.FC<TimerProps> = ({
   };
 
   const resetSession = (e: React.MouseEvent) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Surrounding timer div is clickable so stop propagation of click event
     setSessionTimeInSeconds(0);
     setIsRunning(false);
   };
 
   const commitSession = async (e: React.MouseEvent) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Surrounding timer div is clickable so stop propagation of click event
     try {
       const response = await fetch(`/api/timers/${id}`, {
         method: "POST",
@@ -149,7 +149,7 @@ export const Timer: React.FC<TimerProps> = ({
         </span>
 
         {!isRunning && (
-          <button className="col-2 row-1 ml-auto cursor-pointer border-2" onClick={deleteTimer}>
+          <button className="col-2 row-1 ml-auto cursor-pointer" onClick={deleteTimer}>
             <Image
               src="/images/delete-timer-icon.svg"
               width={ICON_WIDTH}
@@ -164,7 +164,7 @@ export const Timer: React.FC<TimerProps> = ({
 
         {!isRunning && sessionTimeInSeconds != 0 && (
           <>
-            <button className="col-2 row-5 ml-auto cursor-pointer border-2" onClick={resetSession}>
+            <button className="col-2 row-5 ml-auto cursor-pointer" onClick={resetSession}>
               <Image
                 src="/images/reset-session-icon.svg"
                 width={ICON_WIDTH}
@@ -174,7 +174,7 @@ export const Timer: React.FC<TimerProps> = ({
               />
             </button>
 
-            <button className="col-2 row-9 ml-auto cursor-pointer border-2" onClick={commitSession}>
+            <button className="col-2 row-9 ml-auto cursor-pointer" onClick={commitSession}>
               <Image
                 src="/images/commit-session-icon.svg"
                 width={ICON_WIDTH}

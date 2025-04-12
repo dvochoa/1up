@@ -1,5 +1,6 @@
 .grid-container {
   display: grid;
+  /* grid-template-rows: 33% 33% 33%; */
   grid-template-rows: repeat(10, 10%);
   grid-template-columns: 80%;
 }
