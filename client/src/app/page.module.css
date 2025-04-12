@@ -1,7 +1,7 @@
 /* Base grid layout for mobile (default) */
 .grid-container {
   display: grid;
-  grid-template-columns: 20% 60% 20%;
+  grid-template-columns: 15% 70% 15%;
 }
 
 /* Large screens (laptops, desktops) */

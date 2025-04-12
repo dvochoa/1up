@@ -13,10 +13,8 @@ export interface TimerProps {
 
 const SECONDS_IN_A_HOUR: number = 3600;
 const SECONDS_IN_A_MINUTE: number = 60;
-const ICON_WIDTH = 30;
-const ICON_HEIGHT = 30;
-const DELETE_ICON_WIDTH = 18;
-const DELETE_ICON_HEIGHT = 18;
+const ICON_WIDTH = 18;
+const ICON_HEIGHT = 18;
 
 export const Timer: React.FC<TimerProps> = ({
   id,
@@ -78,7 +76,7 @@ export const Timer: React.FC<TimerProps> = ({
     return displayTime;
   };
 
-  const toggleState = (): void => {
+  const toggleIsRunning = (): void => {
     setIsRunning(!isRunning);
   };
 
@@ -92,7 +90,34 @@ export const Timer: React.FC<TimerProps> = ({
     }
   };
 
-  const commitSession = async () => {
+  const deleteTimer = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Surrounding timer div is clickable so stop propagation of click event
+    try {
+      const response = await fetch(`/api/timers/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        onTimerDeleted();
+      } else {
+        // TODO: Communicate the failure to the user
+        console.error(
+          "Error Code %d encountered when attempting to delete timer: ",
+          response.status,
+        );
+      }
+    } catch (error) {
+      console.error("Parse error: ", error);
+    }
+  };
+
+  const resetSession = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Surrounding timer div is clickable so stop propagation of click event
+    setSessionTimeInSeconds(0);
+    setIsRunning(false);
+  };
+
+  const commitSession = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Surrounding timer div is clickable so stop propagation of click event
     try {
       const response = await fetch(`/api/timers/${id}`, {
         method: "POST",
@@ -112,61 +137,58 @@ export const Timer: React.FC<TimerProps> = ({
     }
   };
 
-  const deleteTimer = async () => {
-    try {
-      const response = await fetch(`/api/timers/${id}`, {
-        method: "DELETE",
-      });
-      if (response.ok) {
-        onTimerDeleted();
-      } else {
-        // TODO: Communicate the failure to the user
-        console.error(
-          "Error Code %d encountered when attempting to delete timer: ",
-          response.status,
-        );
-      }
-    } catch (error) {
-      console.error("Parse error: ", error);
-    }
-  };
-
   return (
     <div
       className={`cursor-pointer rounded-sm shadow-md dark:shadow-none ${getTimerColor()}`}
-      onClick={toggleState}
+      onClick={toggleIsRunning}
     >
       <div className={`${styles["grid-container"]} h-full p-2 pb-3 pl-3`}>
         <span className="col-1 row-1">
-          <span className="mr-3 text-xl font-bold">{title}</span>
-          <span className="text-xs text-neutral-500">{formatTotalTime()}</span>
+          <span className="mr-3 text-xl">{title}</span>
+          <span className="text-xs text-neutral-700 dark:text-neutral-300">
+            {formatTotalTime()}
+          </span>
         </span>
 
         {!isRunning && (
           <button className="col-2 row-1 ml-auto cursor-pointer" onClick={deleteTimer}>
             <Image
               src="/images/delete-timer-icon.svg"
-              width={DELETE_ICON_WIDTH}
-              height={DELETE_ICON_HEIGHT}
+              width={ICON_WIDTH}
+              height={ICON_HEIGHT}
               alt="A trash can, on click this timer is deleted"
               className="dark:invert"
             />
           </button>
         )}
 
-        <h1 className="col-1 row-3 text-2xl">{formatTime()}</h1>
+        <h1 className="col-1 row-7 text-4xl font-bold">{formatTime()}</h1>
 
-        {!isRunning && sessionTimeInSeconds != 0 && (
-          <button className="col-2 row-3 ml-auto cursor-pointer" onClick={commitSession}>
-            <Image
-              src="/images/commit-icon.svg"
-              width={ICON_WIDTH}
-              height={ICON_HEIGHT}
-              alt="An arrow, on click the current session's progress is committed"
-              className="dark:invert"
-            />
-          </button>
-        )}
+        <button
+          className={`col-2 row-5 ml-auto cursor-pointer ${isRunning || sessionTimeInSeconds == 0 ? "pointer-events-none invisible" : ""}`}
+          onClick={resetSession}
+        >
+          <Image
+            src="/images/reset-session-icon.svg"
+            width={ICON_WIDTH}
+            height={ICON_HEIGHT}
+            alt="A refresh, on click resets the current session back to zero"
+            className="dark:invert"
+          />
+        </button>
+
+        <button
+          className={`col-2 row-9 ml-auto cursor-pointer ${isRunning || sessionTimeInSeconds == 0 ? "pointer-events-none invisible" : ""}`}
+          onClick={commitSession}
+        >
+          <Image
+            src="/images/commit-session-icon.svg"
+            width={ICON_WIDTH}
+            height={ICON_HEIGHT}
+            alt="An arrow, on click the current session's progress is committed"
+            className="dark:invert"
+          />
+        </button>
       </div>
     </div>
   );
