@@ -28,7 +28,7 @@ const CreateTimer: React.FC<CreateTimerProps> = ({ onTimerCreated }) => {
       >
         <button
           onClick={() => setIsCreating(true)}
-          className="rounded-full bg-zinc-500/40 p-3 text-white transition-colors duration-200 hover:bg-zinc-500/60 focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:outline-none dark:bg-zinc-500/40 dark:hover:bg-zinc-500/60"
+          className="cursor-pointer rounded-full bg-zinc-500/40 p-3 text-white transition-colors duration-200 hover:bg-zinc-500/60 focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:outline-none dark:bg-zinc-500/40 dark:hover:bg-zinc-500/60"
         >
           <Image
             src="/images/new-timer-icon.svg"

@@ -24,7 +24,7 @@ const ThemeToggle = ({ className = "" }: { className?: string }) => {
   return (
     <button
       onClick={() => (currentTheme == "dark" ? setTheme("light") : setTheme("dark"))}
-      className={className}
+      className={`${className} cursor-pointer`}
     >
       <Image
         src={

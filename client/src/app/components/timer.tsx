@@ -133,7 +133,7 @@ export const Timer: React.FC<TimerProps> = ({
 
   return (
     <div
-      className={`rounded-sm shadow-md dark:shadow-none ${getTimerColor()}`}
+      className={`cursor-pointer rounded-sm shadow-md dark:shadow-none ${getTimerColor()}`}
       onClick={toggleState}
     >
       <div className={`${styles["grid-container"]} h-full p-2 pb-3 pl-3`}>
@@ -143,7 +143,7 @@ export const Timer: React.FC<TimerProps> = ({
         </span>
 
         {!isRunning && (
-          <button className="col-2 row-1 ml-auto" onClick={deleteTimer}>
+          <button className="col-2 row-1 ml-auto cursor-pointer" onClick={deleteTimer}>
             <Image
               src="/images/delete-timer-icon.svg"
               width={DELETE_ICON_WIDTH}
@@ -157,7 +157,7 @@ export const Timer: React.FC<TimerProps> = ({
         <h1 className="col-1 row-3 text-2xl">{formatTime()}</h1>
 
         {!isRunning && sessionTimeInSeconds != 0 && (
-          <button className="col-2 row-3 ml-auto" onClick={commitSession}>
+          <button className="col-2 row-3 ml-auto cursor-pointer" onClick={commitSession}>
             <Image
               src="/images/commit-icon.svg"
               width={ICON_WIDTH}
