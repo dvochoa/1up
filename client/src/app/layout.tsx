@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={merriweather.className} suppressHydrationWarning>
       <body className="flex min-h-lvh flex-col">
         <Header className="h-[15vh] flex-shrink-0 lg:h-[10vh]" />
-        <main className="flex-grow pb-[0vh]">{children}</main>
+        <main className="flex-grow pb-[5vh]">{children}</main>
       </body>
     </html>
   );

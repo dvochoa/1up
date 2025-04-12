@@ -9,7 +9,7 @@ interface TimerListProps {
 
 const TimerList: React.FC<TimerListProps> = ({ timers, onTimerCreated, onTimerDeleted }) => {
   return (
-    <div className="grid gap-y-5 lg:grid-flow-col lg:grid-cols-4 lg:grid-rows-5 lg:gap-x-25 lg:gap-y-10 2xl:grid-cols-5 2xl:grid-rows-7">
+    <div className="grid gap-y-5 lg:grid-flow-col lg:grid-cols-4 lg:grid-rows-4 lg:gap-x-15 lg:gap-y-10 2xl:grid-cols-5 2xl:grid-rows-7 2xl:gap-x-25">
       {timers.map((timer) => (
         <Timer
           key={timer.id}
