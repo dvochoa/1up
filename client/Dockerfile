@@ -2,8 +2,6 @@ FROM node:18-alpine AS base
 WORKDIR /app
 # Enables use of pnpm
 RUN corepack enable
-# TODO: Remove this once latest pnpm is fixed (https://github.com/nodejs/corepack/issues/612
-ENV COREPACK_DEFAULT_TO_LATEST=0
 
 FROM base AS deps
 COPY package.json pnpm-lock.yaml ./
