@@ -121,6 +121,9 @@ export const Timer: React.FC<TimerProps> = ({
     try {
       const response = await fetch(`/api/timers/${id}`, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ sessionDurationInSeconds: sessionTimeInSeconds }),
       });
       const jsonResponse = await response.json();
