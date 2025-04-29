@@ -43,8 +43,8 @@ func (store TimerStore) CloseConnection(ctx context.Context) {
 	}
 }
 
-// GetTimers returns all timers
-func (store TimerStore) GetTimers(ctx context.Context, userId int64) ([]models.TimerOverview, error) {
+// GetTimers returns all timers for a given user
+func (store TimerStore) GetTimers(ctx context.Context, userId int64) ([]models.Timer, error) {
 	queryCtx, cancel := getQueryCtx(ctx)
 	defer cancel()
 
@@ -62,12 +62,35 @@ func (store TimerStore) GetTimers(ctx context.Context, userId int64) ([]models.T
 		 GROUP BY ts.id, ts.owner_id, ts.title;`,
 		userId,
 	)
-	timers, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.TimerOverview])
+	timers, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Timer])
 	return timers, err
 }
 
+// GetTimer returns the keyed by the given user
+func (store TimerStore) GetTimer(ctx context.Context, timerId int64) (models.Timer, error) {
+	queryCtx, cancel := getQueryCtx(ctx)
+	defer cancel()
+
+	rows, _ := store.conn.Query(
+		queryCtx,
+		`SELECT 
+			ts.id as id,
+			ts.owner_id as ownerId,
+			ts.title as title,
+			COALESCE(SUM(tp.session_duration_in_seconds), 0) as totalTimeInSeconds
+		 FROM (
+		 	SELECT id, owner_id, title FROM timersettings WHERE id = $1
+		 ) ts
+		 LEFT JOIN timersessions tp ON tp.timer_setting_id = ts.id
+		 GROUP BY ts.id, ts.owner_id, ts.title;`,
+		timerId,
+	)
+	timer, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[models.Timer])
+	return timer, err
+}
+
 // GetTimerSessions returns the timer with matching id, if any
-func (store TimerStore) GetTimerSessions(ctx context.Context, timerSettingId int) ([]models.TimerSession, error) {
+func (store TimerStore) GetTimerSessions(ctx context.Context, timerSettingId int64) ([]models.TimerSession, error) {
 	queryCtx, cancel := getQueryCtx(ctx)
 	defer cancel()
 
@@ -103,11 +126,11 @@ func (store TimerStore) AddTimerSession(
 // CreateTimerSetting inserts a new timer into the timerSettings table
 func (store TimerStore) CreateTimerSetting(
 	ctx context.Context,
-	createReq *models.CreateTimerRequest) (models.TimerOverview, error) {
+	createReq *models.CreateTimerRequest) (models.Timer, error) {
 	queryCtx, cancel := getQueryCtx(ctx)
 	defer cancel()
 
-	timer := models.TimerOverview{OwnerId: createReq.OwnerId, Title: createReq.Title}
+	timer := models.Timer{OwnerId: createReq.OwnerId, Title: createReq.Title}
 	err := store.conn.QueryRow(
 		queryCtx,
 		"INSERT INTO timerSettings (owner_id, title) VALUES ($1, $2) RETURNING id",
@@ -118,7 +141,7 @@ func (store TimerStore) CreateTimerSetting(
 
 // UpdateTimer replaces the timer keyed by id.
 // Throws an error when no matching timer is found
-func (store TimerStore) UpdateTimerSettings(ctx context.Context, timer *models.TimerOverview) error {
+func (store TimerStore) UpdateTimerSettings(ctx context.Context, timer *models.Timer) error {
 	queryCtx, cancel := getQueryCtx(ctx)
 	defer cancel()
 

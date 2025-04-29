@@ -3,29 +3,22 @@
 import { useEffect, useState } from "react";
 
 import styles from "./page.module.css";
+import { Timer } from "@/models/timer";
 import { TimerProps } from "@/components/timer";
 import TimerList from "@/components/timer-list";
 
-interface TimerOverview {
-  id: number;
-  title: string;
-  totalTimeInSeconds: number;
-}
-
-export default function HomePage() {
+export default function TimersOverviewPage() {
   const [timers, setTimers] = useState<TimerProps[]>([]);
 
   const fetchTimers = async () => {
     try {
       const response = await fetch("/api/users/1/timers");
       const jsonResponse = await response.json();
-      const parsedTimers: TimerProps[] = await jsonResponse.timerOverviews.map(
-        (timer: TimerOverview) => ({
-          id: timer.id,
-          title: timer.title,
-          totalTimeInSeconds: timer.totalTimeInSeconds,
-        }),
-      );
+      const parsedTimers: TimerProps[] = jsonResponse.timers.map((timer: Timer) => ({
+        id: timer.id,
+        title: timer.title,
+        totalTimeInSeconds: timer.totalTimeInSeconds,
+      }));
       setTimers(parsedTimers);
     } catch (error) {
       // TODO: Handle error as desired

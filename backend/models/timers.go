@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-type TimerOverview struct {
+type Timer struct {
 	Id                 int64  `json:"id"`
 	OwnerId            int64  `json:"ownerId"`
 	Title              string `json:"title"`
@@ -10,7 +10,7 @@ type TimerOverview struct {
 }
 
 type GetTimersResponse struct {
-	TimerOverviews []TimerOverview `json:"timerOverviews"`
+	Timers []Timer `json:"timers"`
 }
 
 type CreateTimerRequest struct {
@@ -28,6 +28,7 @@ type TimerSession struct {
 	SessionDurationInSeconds int32     `json:"sessionDurationInSeconds"`
 }
 
-type GetTimerHistoryResponse struct {
+type GetTimerDetailsResponse struct {
+	Timer         Timer          `json:"timer"`
 	TimerSessions []TimerSession `json:"timerSessions"`
 }

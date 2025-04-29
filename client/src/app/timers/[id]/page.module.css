@@ -1,0 +1,13 @@
+/* Base grid layout for mobile (default) */
+.grid-container {
+  display: grid;
+  grid-template-rows: 30% auto;
+  grid-template-columns: 15% 70% 15%;
+}
+
+/* Large screens (laptops, desktops) */
+@media (min-width: 1024px) {
+  .grid-container {
+    grid-template-columns: 15% 70% 15%;
+  }
+}
