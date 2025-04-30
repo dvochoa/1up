@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 
 import styles from "./page.module.css";
 import { Timer } from "@/models/timer";
-import { TimerProps } from "@/components/timer";
-import TimerList from "@/components/timer-list";
+import { TimerProps } from "_components/timer";
+import TimerList from "_components/timer-list";
 
 export default function TimersOverviewPage() {
   const [timers, setTimers] = useState<TimerProps[]>([]);
