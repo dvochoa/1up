@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { NewTimer } from "@/components/new-timer";
+import { NewTimer } from "./new-timer";
 
 interface CreateTimerProps {
   onTimerCreated: () => void;
