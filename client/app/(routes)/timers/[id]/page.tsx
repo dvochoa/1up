@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { use } from "react";
 
 import styles from "./page.module.css";
-import { TimerDetails } from "@/models/timer";
+import { TimerDetails } from "../../../models/timers";
 
 export default function TimersOverviewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);

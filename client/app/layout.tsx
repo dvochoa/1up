@@ -1,6 +1,6 @@
 import { Merriweather } from "next/font/google";
 
-import Header from "_components/header";
+import Header from "./components/header";
 
 const merriweather = Merriweather({
   weight: ["300", "400", "700", "900"],
