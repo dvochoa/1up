@@ -31,17 +31,31 @@ export default function TimersOverviewPage({ params }: { params: Promise<{ id: s
     fetchTimerDetails();
   }, []);
 
-  // row-start-2 not working since <main> doesn't have display:grid
+  // TODO: Use a suspense or something when doesn't load?
+  // TODO: style button
+
   return (
-    <div className={`${styles["grid-container"]}`}>
-      <meta charSet="utf-8"></meta>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
-      <main className="col-start-2">
+    <div className={`${styles["page-grid-container"]} h-[85vh]`}>
+      <main className={`col-start-2 row-start-2`}>
         {timerDetails ? (
-          <div className="row-start-2">
-            <h1 className="text-4xl">{timerDetails.timer.title}</h1>
-            <p className="text-xl">Add a description</p>
-            <button className="cursor-pointer text-xl">Delete</button>
+          <div className={`${styles["timer-details"]} gap-x-5`}>
+            {/* Timer description + delete column */}
+            <div>
+              <h1 className="text-4xl">{timerDetails.timer.title}</h1>
+              <p className="text-xl">
+                Working on any one of my various side projects, reading books related to software,
+                dev, learning about topics I am unfamiliar with, trying out new tech, etc
+              </p>
+              <button className="cursor-pointer text-xl">Delete</button>
+            </div>
+
+            {/* Timer stats column */}
+            <div className="col-start-2">
+              <p className="text-xl">
+                Working on any one of my various side projects, reading books related to software,
+                dev, learning about topics I am unfamiliar with, trying out new tech, etc
+              </p>
+            </div>
           </div>
         ) : (
           <p>Loading timer...</p>

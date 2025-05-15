@@ -32,8 +32,6 @@ export default function TimersOverviewPage() {
 
   return (
     <div className={`${styles["grid-container"]}`}>
-      <meta charSet="utf-8"></meta>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
       <main className="col-start-2">
         <TimerList timers={timers} onTimerCreated={fetchTimers} onTimerDeleted={fetchTimers} />
       </main>
