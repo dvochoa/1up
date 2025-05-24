@@ -1,6 +1,6 @@
 import { Merriweather } from "next/font/google";
 
-import Header from "@/components/header";
+import Header from "./components/header";
 
 const merriweather = Merriweather({
   weight: ["300", "400", "700", "900"],
@@ -9,7 +9,7 @@ const merriweather = Merriweather({
   display: "swap",
 });
 
-import "@/styles/global.css";
+import "global.css";
 
 export const metadata = {
   title: "1up",

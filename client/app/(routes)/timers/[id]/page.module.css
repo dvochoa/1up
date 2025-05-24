@@ -1,0 +1,18 @@
+/* Base grid layout for mobile (default) */
+.page-grid-container {
+  display: grid;
+  grid-template-rows: 15% auto;
+  grid-template-columns: 15% 70% 15%;
+}
+
+.timer-details {
+  display: grid;
+  grid-template-columns: 25% 1fr;
+}
+
+/* Large screens (laptops, desktops) */
+@media (min-width: 1024px) {
+  .page-grid-container {
+    grid-template-columns: 15% 70% 15%;
+  }
+}

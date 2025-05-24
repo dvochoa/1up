@@ -23,22 +23,30 @@ func GetTimers(c *gin.Context) {
 		return
 	}
 
-	timerOverviews, err := TimerStore.GetTimers(c.Request.Context(), userId)
+	timers, err := TimerStore.GetTimers(c.Request.Context(), userId)
 	if err != nil {
 		log.Printf("Error when calling TimerStore.GetTimers: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get timers"})
 		return
 	}
 
-	response := models.GetTimersResponse{TimerOverviews: timerOverviews}
+	response := models.GetTimersResponse{Timers: timers}
 	c.JSON(http.StatusOK, response)
 }
 
-// GetTimerHistory returns the history of the timer with matching id, if any
-func GetTimerHistory(c *gin.Context) {
-	timerId, err := strconv.Atoi(c.Param("id"))
+// GetTimerDetails returns extensive details of the timer with matching id, if any
+func GetTimerDetails(c *gin.Context) {
+	timerId, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid timerId"})
+		return
+	}
+
+	// TODO: Do these both in parallel
+	timer, err := TimerStore.GetTimer(c.Request.Context(), timerId)
+	if err != nil {
+		log.Printf("Error when calling TimerStore.GetTimer: %v", err)
+		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Failed to get info for timer with id=%d", timerId)})
 		return
 	}
 
@@ -49,7 +57,10 @@ func GetTimerHistory(c *gin.Context) {
 		return
 	}
 
-	response := models.GetTimerHistoryResponse{TimerSessions: timerSessions}
+	response := models.GetTimerDetailsResponse{
+		Timer:         timer,
+		TimerSessions: timerSessions,
+	}
 	c.JSON(http.StatusOK, response)
 }
 
@@ -97,7 +108,7 @@ func CreateTimer(c *gin.Context) {
 
 // UpdateTimer updates the data associated with the timer keyed by id
 func UpdateTimerSettings(c *gin.Context) {
-	var updatedTimer models.TimerOverview
+	var updatedTimer models.Timer
 
 	if err := c.BindJSON(&updatedTimer); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

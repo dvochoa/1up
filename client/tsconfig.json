@@ -31,10 +31,10 @@
         "name": "next"
       }
     ],
-    "baseUrl": "src/app/",
+    "baseUrl": "app",
     "paths": {
       "@/components/*": ["components/*"],
-      "@/styles/*": ["styles/*"]
+      "@/models/*": ["models/*"]
     }
   },
   "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],

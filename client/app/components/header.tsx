@@ -1,5 +1,5 @@
 import { ThemeProvider } from "next-themes";
-import ThemeToggle from "@/components/theme-toggle";
+import ThemeToggle from "./theme-toggle";
 
 import styles from "./header.module.css";
 

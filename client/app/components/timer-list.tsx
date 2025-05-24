@@ -1,5 +1,5 @@
-import { Timer, TimerProps } from "@/components/timer";
-import CreateTimer from "@/components/create-timer";
+import { Timer, TimerProps } from "./timer";
+import CreateTimer from "./create-timer";
 
 interface TimerListProps {
   timers: TimerProps[];
